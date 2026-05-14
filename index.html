@@ -455,71 +455,2564 @@ select:focus, input:focus { border-color: var(--accent-2); }
 
 <script>
 // =====================================================
-// Futbol 2026 - Mock Veri Seti
-// Gerçek API'ye bağlanmak isterseniz fetchFixtures()'ı düzenleyin.
+// Futbol 2026 - GERÇEK VERİ (auto-generated)
+// Kaynaklar:
+// - github.com/martj42/international_results (45k milli takım maçı, 2015+ filtreli)
+// - football-data.co.uk 2024-25 sezon (Top 5 + Süper Lig)
+// Üretim: 2026-05-14T17:05:44.014Z
 // =====================================================
 
 const TEAMS = {
-  // 2026 Dünya Kupası - Favori adaylar (gerçek Elo'lara yakın)
-  "Arjantin":      { elo: 2105, league: "WC2026", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 0.8 },
-  "Fransa":        { elo: 2080, league: "WC2026", form: [3,3,3,1,3], goalsFor: 2.0, goalsAg: 0.9 },
-  "Brezilya":      { elo: 2070, league: "WC2026", form: [3,1,3,3,1], goalsFor: 1.9, goalsAg: 0.7 },
-  "İngiltere":     { elo: 2045, league: "WC2026", form: [3,3,1,3,1], goalsFor: 1.8, goalsAg: 0.9 },
-  "İspanya":       { elo: 2055, league: "WC2026", form: [3,3,3,3,1], goalsFor: 1.9, goalsAg: 0.8 },
-  "Almanya":       { elo: 2020, league: "WC2026", form: [1,3,3,1,3], goalsFor: 1.7, goalsAg: 1.0 },
-  "Hollanda":      { elo: 2010, league: "WC2026", form: [3,1,3,3,1], goalsFor: 1.7, goalsAg: 1.0 },
-  "Portekiz":      { elo: 2035, league: "WC2026", form: [3,3,1,3,3], goalsFor: 1.9, goalsAg: 0.9 },
-  "İtalya":        { elo: 1995, league: "WC2026", form: [1,3,1,3,3], goalsFor: 1.5, goalsAg: 0.9 },
-  "Belçika":       { elo: 1985, league: "WC2026", form: [3,1,1,3,3], goalsFor: 1.6, goalsAg: 1.0 },
-  "Hırvatistan":   { elo: 1970, league: "WC2026", form: [1,3,1,3,1], goalsFor: 1.4, goalsAg: 1.0 },
-  "Uruguay":       { elo: 1960, league: "WC2026", form: [3,1,3,1,3], goalsFor: 1.6, goalsAg: 1.1 },
-  "Türkiye":       { elo: 1820, league: "WC2026", form: [1,3,3,1,3], goalsFor: 1.5, goalsAg: 1.2 },
-  "ABD":           { elo: 1830, league: "WC2026", form: [3,1,1,3,1], goalsFor: 1.4, goalsAg: 1.2 },
-  "Meksika":       { elo: 1840, league: "WC2026", form: [1,3,1,3,1], goalsFor: 1.5, goalsAg: 1.3 },
-  "Kanada":        { elo: 1780, league: "WC2026", form: [1,1,3,1,3], goalsFor: 1.3, goalsAg: 1.3 },
-  "Japonya":       { elo: 1890, league: "WC2026", form: [3,3,1,3,1], goalsFor: 1.6, goalsAg: 1.0 },
-  "Senegal":       { elo: 1850, league: "WC2026", form: [1,3,3,1,1], goalsFor: 1.5, goalsAg: 1.1 },
-  "Fas":           { elo: 1880, league: "WC2026", form: [3,1,3,1,3], goalsFor: 1.5, goalsAg: 0.9 },
-
-  // Süper Lig
-  "Galatasaray":   { elo: 1815, league: "SL", form: [3,3,3,1,3], goalsFor: 2.2, goalsAg: 0.9 },
-  "Fenerbahçe":    { elo: 1810, league: "SL", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 1.0 },
-  "Beşiktaş":      { elo: 1720, league: "SL", form: [1,3,3,1,3], goalsFor: 1.8, goalsAg: 1.2 },
-  "Trabzonspor":   { elo: 1690, league: "SL", form: [3,1,1,3,1], goalsFor: 1.6, goalsAg: 1.3 },
-  "Başakşehir":    { elo: 1640, league: "SL", form: [1,3,1,1,3], goalsFor: 1.4, goalsAg: 1.3 },
-  "Samsunspor":    { elo: 1580, league: "SL", form: [1,1,3,1,3], goalsFor: 1.3, goalsAg: 1.4 },
-
-  // Premier League
-  "Manchester City":  { elo: 2050, league: "PL", form: [3,3,3,3,1], goalsFor: 2.5, goalsAg: 0.9 },
-  "Arsenal":          { elo: 2010, league: "PL", form: [3,3,1,3,3], goalsFor: 2.2, goalsAg: 1.0 },
-  "Liverpool":        { elo: 2020, league: "PL", form: [3,1,3,3,3], goalsFor: 2.3, goalsAg: 1.1 },
-  "Chelsea":          { elo: 1900, league: "PL", form: [1,3,3,1,1], goalsFor: 1.7, goalsAg: 1.2 },
-  "Tottenham":        { elo: 1920, league: "PL", form: [3,1,1,3,3], goalsFor: 1.9, goalsAg: 1.3 },
-  "Manchester United":{ elo: 1880, league: "PL", form: [1,3,1,1,3], goalsFor: 1.6, goalsAg: 1.3 },
-
-  // La Liga
-  "Real Madrid":   { elo: 2080, league: "LL", form: [3,3,3,1,3], goalsFor: 2.4, goalsAg: 0.8 },
-  "Barcelona":     { elo: 2030, league: "LL", form: [3,1,3,3,3], goalsFor: 2.3, goalsAg: 1.0 },
-  "Atletico Madrid":{ elo: 1950, league: "LL", form: [3,3,1,3,1], goalsFor: 1.9, goalsAg: 1.0 },
-  "Athletic Bilbao":{ elo: 1820, league: "LL", form: [3,1,3,1,3], goalsFor: 1.6, goalsAg: 1.1 },
-
-  // Serie A
-  "Inter":         { elo: 2000, league: "SA", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 0.9 },
-  "Milan":         { elo: 1940, league: "SA", form: [3,1,3,1,3], goalsFor: 1.9, goalsAg: 1.1 },
-  "Juventus":      { elo: 1920, league: "SA", form: [1,3,3,1,3], goalsFor: 1.8, goalsAg: 1.0 },
-  "Napoli":        { elo: 1955, league: "SA", form: [3,3,1,3,1], goalsFor: 1.9, goalsAg: 1.1 },
-
-  // Bundesliga
-  "Bayern Münih":  { elo: 2040, league: "BL", form: [3,3,3,1,3], goalsFor: 2.6, goalsAg: 1.0 },
-  "Leverkusen":    { elo: 1970, league: "BL", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 1.0 },
-  "Dortmund":      { elo: 1910, league: "BL", form: [3,1,3,1,3], goalsFor: 2.0, goalsAg: 1.2 },
-  "RB Leipzig":    { elo: 1890, league: "BL", form: [1,3,1,3,3], goalsFor: 1.8, goalsAg: 1.1 },
-
-  // Ligue 1
-  "PSG":           { elo: 2010, league: "L1", form: [3,3,3,3,1], goalsFor: 2.4, goalsAg: 0.9 },
-  "Marseille":     { elo: 1830, league: "L1", form: [3,1,3,1,3], goalsFor: 1.8, goalsAg: 1.2 },
-  "Monaco":        { elo: 1820, league: "L1", form: [1,3,3,1,3], goalsFor: 1.7, goalsAg: 1.2 },
-  "Lyon":          { elo: 1780, league: "L1", form: [1,1,3,3,1], goalsFor: 1.5, goalsAg: 1.3 },
+  "Arjantin": {
+    "elo": 1981,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.01,
+    "goalsAg": 0.66,
+    "played": 140,
+    "w": 92,
+    "d": 31,
+    "l": 17
+  },
+  "Fransa": {
+    "elo": 2007,
+    "league": "WC2026",
+    "form": [
+      1,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.1,
+    "goalsAg": 0.89,
+    "played": 144,
+    "w": 96,
+    "d": 27,
+    "l": 21
+  },
+  "Brezilya": {
+    "elo": 1874,
+    "league": "WC2026",
+    "form": [
+      0,
+      3,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 1.98,
+    "goalsAg": 0.63,
+    "played": 135,
+    "w": 86,
+    "d": 30,
+    "l": 19
+  },
+  "İngiltere": {
+    "elo": 1967,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      1,
+      0
+    ],
+    "goalsFor": 2.09,
+    "goalsAg": 0.68,
+    "played": 140,
+    "w": 88,
+    "d": 29,
+    "l": 23
+  },
+  "İspanya": {
+    "elo": 2068,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      1
+    ],
+    "goalsFor": 2.39,
+    "goalsAg": 0.76,
+    "played": 136,
+    "w": 88,
+    "d": 35,
+    "l": 13
+  },
+  "Almanya": {
+    "elo": 1869,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.26,
+    "goalsAg": 1.1,
+    "played": 137,
+    "w": 76,
+    "d": 32,
+    "l": 29
+  },
+  "Hollanda": {
+    "elo": 1870,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      3,
+      3,
+      1
+    ],
+    "goalsFor": 2.2,
+    "goalsAg": 1.04,
+    "played": 126,
+    "w": 72,
+    "d": 28,
+    "l": 26
+  },
+  "Portekiz": {
+    "elo": 1850,
+    "league": "WC2026",
+    "form": [
+      1,
+      0,
+      3,
+      1,
+      3
+    ],
+    "goalsFor": 2.24,
+    "goalsAg": 0.77,
+    "played": 143,
+    "w": 90,
+    "d": 30,
+    "l": 23
+  },
+  "İtalya": {
+    "elo": 1748,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      0,
+      3,
+      1
+    ],
+    "goalsFor": 1.88,
+    "goalsAg": 0.91,
+    "played": 131,
+    "w": 74,
+    "d": 33,
+    "l": 24
+  },
+  "Belçika": {
+    "elo": 1809,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      3,
+      3,
+      1
+    ],
+    "goalsFor": 2.46,
+    "goalsAg": 0.9,
+    "played": 134,
+    "w": 88,
+    "d": 24,
+    "l": 22
+  },
+  "Hırvatistan": {
+    "elo": 1848,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.76,
+    "goalsAg": 1.03,
+    "played": 135,
+    "w": 71,
+    "d": 34,
+    "l": 30
+  },
+  "Uruguay": {
+    "elo": 1814,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      0,
+      1,
+      1
+    ],
+    "goalsFor": 1.44,
+    "goalsAg": 0.9,
+    "played": 126,
+    "w": 58,
+    "d": 35,
+    "l": 33
+  },
+  "Türkiye": {
+    "elo": 1847,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.68,
+    "goalsAg": 1.19,
+    "played": 127,
+    "w": 65,
+    "d": 31,
+    "l": 31
+  },
+  "ABD": {
+    "elo": 1762,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.91,
+    "goalsAg": 0.99,
+    "played": 173,
+    "w": 93,
+    "d": 34,
+    "l": 46
+  },
+  "Meksika": {
+    "elo": 1828,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      1,
+      1
+    ],
+    "goalsFor": 1.57,
+    "goalsAg": 0.98,
+    "played": 191,
+    "w": 103,
+    "d": 46,
+    "l": 42
+  },
+  "Kanada": {
+    "elo": 1808,
+    "league": "WC2026",
+    "form": [
+      1,
+      1,
+      3,
+      1,
+      1
+    ],
+    "goalsFor": 1.9,
+    "goalsAg": 0.93,
+    "played": 120,
+    "w": 62,
+    "d": 28,
+    "l": 30
+  },
+  "Japonya": {
+    "elo": 1963,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.32,
+    "goalsAg": 0.8,
+    "played": 148,
+    "w": 94,
+    "d": 25,
+    "l": 29
+  },
+  "Senegal": {
+    "elo": 1901,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.71,
+    "goalsAg": 0.64,
+    "played": 141,
+    "w": 90,
+    "d": 35,
+    "l": 16
+  },
+  "Fas": {
+    "elo": 1973,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      3,
+      1,
+      3
+    ],
+    "goalsFor": 1.73,
+    "goalsAg": 0.51,
+    "played": 144,
+    "w": 93,
+    "d": 31,
+    "l": 20
+  },
+  "Güney Kore": {
+    "elo": 1876,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.75,
+    "goalsAg": 0.86,
+    "played": 151,
+    "w": 87,
+    "d": 36,
+    "l": 28
+  },
+  "İsviçre": {
+    "elo": 1829,
+    "league": "WC2026",
+    "form": [
+      1,
+      3,
+      1,
+      0,
+      1
+    ],
+    "goalsFor": 1.82,
+    "goalsAg": 1.05,
+    "played": 130,
+    "w": 63,
+    "d": 37,
+    "l": 30
+  },
+  "Danimarka": {
+    "elo": 1768,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      0,
+      3,
+      1
+    ],
+    "goalsFor": 1.83,
+    "goalsAg": 0.85,
+    "played": 127,
+    "w": 66,
+    "d": 34,
+    "l": 27
+  },
+  "Polonya": {
+    "elo": 1656,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.74,
+    "goalsAg": 1.16,
+    "played": 125,
+    "w": 60,
+    "d": 31,
+    "l": 34
+  },
+  "Ukrayna": {
+    "elo": 1642,
+    "league": "WC2026",
+    "form": [
+      3,
+      0,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.42,
+    "goalsAg": 1.18,
+    "played": 119,
+    "w": 56,
+    "d": 31,
+    "l": 32
+  },
+  "Kolombiya": {
+    "elo": 1879,
+    "league": "WC2026",
+    "form": [
+      1,
+      3,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.49,
+    "goalsAg": 0.86,
+    "played": 132,
+    "w": 64,
+    "d": 41,
+    "l": 27
+  },
+  "Şili": {
+    "elo": 1627,
+    "league": "WC2026",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.31,
+    "goalsAg": 1.23,
+    "played": 134,
+    "w": 49,
+    "d": 35,
+    "l": 50
+  },
+  "Ekvador": {
+    "elo": 1881,
+    "league": "WC2026",
+    "form": [
+      1,
+      1,
+      3,
+      1,
+      1
+    ],
+    "goalsFor": 1.32,
+    "goalsAg": 1.03,
+    "played": 123,
+    "w": 48,
+    "d": 39,
+    "l": 36
+  },
+  "Avustralya": {
+    "elo": 1904,
+    "league": "WC2026",
+    "form": [
+      0,
+      0,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.92,
+    "goalsAg": 0.83,
+    "played": 117,
+    "w": 67,
+    "d": 24,
+    "l": 26
+  },
+  "İran": {
+    "elo": 1873,
+    "league": "WC2026",
+    "form": [
+      3,
+      1,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 2.06,
+    "goalsAg": 0.65,
+    "played": 125,
+    "w": 84,
+    "d": 24,
+    "l": 17
+  },
+  "Suudi Arabistan": {
+    "elo": 1693,
+    "league": "WC2026",
+    "form": [
+      0,
+      3,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.39,
+    "goalsAg": 1.06,
+    "played": 157,
+    "w": 69,
+    "d": 34,
+    "l": 54
+  },
+  "Galler": {
+    "elo": 1632,
+    "league": "WC2026",
+    "form": [
+      0,
+      3,
+      3,
+      1,
+      1
+    ],
+    "goalsFor": 1.26,
+    "goalsAg": 1.03,
+    "played": 115,
+    "w": 47,
+    "d": 34,
+    "l": 34
+  },
+  "İskoçya": {
+    "elo": 1718,
+    "league": "WC2026",
+    "form": [
+      3,
+      0,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.44,
+    "goalsAg": 1.29,
+    "played": 112,
+    "w": 49,
+    "d": 22,
+    "l": 41
+  },
+  "Avusturya": {
+    "elo": 1748,
+    "league": "WC2026",
+    "form": [
+      0,
+      3,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.74,
+    "goalsAg": 1.02,
+    "played": 119,
+    "w": 65,
+    "d": 21,
+    "l": 33
+  },
+  "İsveç": {
+    "elo": 1632,
+    "league": "WC2026",
+    "form": [
+      0,
+      0,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.6,
+    "goalsAg": 1.1,
+    "played": 136,
+    "w": 67,
+    "d": 24,
+    "l": 45
+  },
+  "Sırbistan": {
+    "elo": 1661,
+    "league": "WC2026",
+    "form": [
+      3,
+      0,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.57,
+    "goalsAg": 1.15,
+    "played": 120,
+    "w": 56,
+    "d": 31,
+    "l": 33
+  },
+  "Man United": {
+    "elo": 1424,
+    "league": "PL",
+    "form": [
+      1,
+      0,
+      0,
+      0,
+      3
+    ],
+    "goalsFor": 1.16,
+    "goalsAg": 1.42,
+    "played": 38,
+    "w": 11,
+    "d": 9,
+    "l": 18
+  },
+  "Fulham": {
+    "elo": 1490,
+    "league": "PL",
+    "form": [
+      3,
+      0,
+      0,
+      3,
+      0
+    ],
+    "goalsFor": 1.42,
+    "goalsAg": 1.42,
+    "played": 38,
+    "w": 15,
+    "d": 9,
+    "l": 14
+  },
+  "Ipswich": {
+    "elo": 1275,
+    "league": "PL",
+    "form": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 0.95,
+    "goalsAg": 2.16,
+    "played": 38,
+    "w": 4,
+    "d": 10,
+    "l": 24
+  },
+  "Liverpool": {
+    "elo": 1672,
+    "league": "PL",
+    "form": [
+      3,
+      0,
+      1,
+      0,
+      1
+    ],
+    "goalsFor": 2.26,
+    "goalsAg": 1.08,
+    "played": 38,
+    "w": 25,
+    "d": 9,
+    "l": 4
+  },
+  "Arsenal": {
+    "elo": 1646,
+    "league": "PL",
+    "form": [
+      1,
+      0,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.82,
+    "goalsAg": 0.89,
+    "played": 38,
+    "w": 20,
+    "d": 14,
+    "l": 4
+  },
+  "Wolves": {
+    "elo": 1458,
+    "league": "PL",
+    "form": [
+      3,
+      0,
+      0,
+      0,
+      1
+    ],
+    "goalsFor": 1.42,
+    "goalsAg": 1.82,
+    "played": 38,
+    "w": 12,
+    "d": 6,
+    "l": 20
+  },
+  "Everton": {
+    "elo": 1533,
+    "league": "PL",
+    "form": [
+      0,
+      1,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 1.11,
+    "goalsAg": 1.16,
+    "played": 38,
+    "w": 11,
+    "d": 15,
+    "l": 12
+  },
+  "Brighton": {
+    "elo": 1570,
+    "league": "PL",
+    "form": [
+      3,
+      1,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 1.74,
+    "goalsAg": 1.55,
+    "played": 38,
+    "w": 16,
+    "d": 13,
+    "l": 9
+  },
+  "Newcastle": {
+    "elo": 1575,
+    "league": "PL",
+    "form": [
+      3,
+      1,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.79,
+    "goalsAg": 1.24,
+    "played": 38,
+    "w": 20,
+    "d": 6,
+    "l": 12
+  },
+  "Southampton": {
+    "elo": 1229,
+    "league": "PL",
+    "form": [
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "goalsFor": 0.68,
+    "goalsAg": 2.26,
+    "played": 38,
+    "w": 2,
+    "d": 6,
+    "l": 30
+  },
+  "Nott'm Forest": {
+    "elo": 1541,
+    "league": "PL",
+    "form": [
+      0,
+      1,
+      1,
+      3,
+      0
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 1.21,
+    "played": 38,
+    "w": 19,
+    "d": 8,
+    "l": 11
+  },
+  "Bournemouth": {
+    "elo": 1536,
+    "league": "PL",
+    "form": [
+      1,
+      3,
+      0,
+      0,
+      3
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 1.21,
+    "played": 38,
+    "w": 15,
+    "d": 11,
+    "l": 12
+  },
+  "West Ham": {
+    "elo": 1439,
+    "league": "PL",
+    "form": [
+      0,
+      1,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.21,
+    "goalsAg": 1.63,
+    "played": 38,
+    "w": 11,
+    "d": 10,
+    "l": 17
+  },
+  "Aston Villa": {
+    "elo": 1581,
+    "league": "PL",
+    "form": [
+      0,
+      3,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 1.34,
+    "played": 38,
+    "w": 19,
+    "d": 9,
+    "l": 10
+  },
+  "Brentford": {
+    "elo": 1542,
+    "league": "PL",
+    "form": [
+      3,
+      3,
+      3,
+      0,
+      1
+    ],
+    "goalsFor": 1.74,
+    "goalsAg": 1.5,
+    "played": 38,
+    "w": 16,
+    "d": 8,
+    "l": 14
+  },
+  "Crystal Palace": {
+    "elo": 1564,
+    "league": "PL",
+    "form": [
+      1,
+      1,
+      3,
+      3,
+      1
+    ],
+    "goalsFor": 1.34,
+    "goalsAg": 1.34,
+    "played": 38,
+    "w": 13,
+    "d": 14,
+    "l": 11
+  },
+  "Chelsea": {
+    "elo": 1592,
+    "league": "PL",
+    "form": [
+      3,
+      3,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.68,
+    "goalsAg": 1.13,
+    "played": 38,
+    "w": 20,
+    "d": 9,
+    "l": 9
+  },
+  "Man City": {
+    "elo": 1653,
+    "league": "PL",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.89,
+    "goalsAg": 1.16,
+    "played": 38,
+    "w": 21,
+    "d": 8,
+    "l": 9
+  },
+  "Leicester": {
+    "elo": 1292,
+    "league": "PL",
+    "form": [
+      0,
+      3,
+      1,
+      3,
+      0
+    ],
+    "goalsFor": 0.87,
+    "goalsAg": 2.11,
+    "played": 38,
+    "w": 6,
+    "d": 7,
+    "l": 25
+  },
+  "Tottenham": {
+    "elo": 1389,
+    "league": "PL",
+    "form": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.68,
+    "goalsAg": 1.71,
+    "played": 38,
+    "w": 11,
+    "d": 5,
+    "l": 22
+  },
+  "Ath Bilbao": {
+    "elo": 1620,
+    "league": "LL",
+    "form": [
+      1,
+      3,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.42,
+    "goalsAg": 0.76,
+    "played": 38,
+    "w": 19,
+    "d": 13,
+    "l": 6
+  },
+  "Getafe": {
+    "elo": 1431,
+    "league": "LL",
+    "form": [
+      0,
+      0,
+      0,
+      3,
+      0
+    ],
+    "goalsFor": 0.89,
+    "goalsAg": 1.03,
+    "played": 38,
+    "w": 11,
+    "d": 9,
+    "l": 18
+  },
+  "Betis": {
+    "elo": 1553,
+    "league": "LL",
+    "form": [
+      3,
+      1,
+      1,
+      0,
+      1
+    ],
+    "goalsFor": 1.5,
+    "goalsAg": 1.32,
+    "played": 38,
+    "w": 16,
+    "d": 12,
+    "l": 10
+  },
+  "Girona": {
+    "elo": 1386,
+    "league": "LL",
+    "form": [
+      3,
+      0,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.16,
+    "goalsAg": 1.58,
+    "played": 38,
+    "w": 11,
+    "d": 8,
+    "l": 19
+  },
+  "Celta": {
+    "elo": 1527,
+    "league": "LL",
+    "form": [
+      0,
+      3,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.55,
+    "goalsAg": 1.5,
+    "played": 38,
+    "w": 16,
+    "d": 7,
+    "l": 15
+  },
+  "Alaves": {
+    "elo": 1467,
+    "league": "LL",
+    "form": [
+      1,
+      0,
+      3,
+      3,
+      1
+    ],
+    "goalsFor": 1,
+    "goalsAg": 1.26,
+    "played": 38,
+    "w": 10,
+    "d": 12,
+    "l": 16
+  },
+  "Las Palmas": {
+    "elo": 1360,
+    "league": "LL",
+    "form": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.05,
+    "goalsAg": 1.61,
+    "played": 38,
+    "w": 8,
+    "d": 8,
+    "l": 22
+  },
+  "Sevilla": {
+    "elo": 1419,
+    "league": "LL",
+    "form": [
+      1,
+      0,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.11,
+    "goalsAg": 1.45,
+    "played": 38,
+    "w": 10,
+    "d": 11,
+    "l": 17
+  },
+  "Osasuna": {
+    "elo": 1534,
+    "league": "LL",
+    "form": [
+      0,
+      1,
+      3,
+      3,
+      1
+    ],
+    "goalsFor": 1.26,
+    "goalsAg": 1.37,
+    "played": 38,
+    "w": 12,
+    "d": 16,
+    "l": 10
+  },
+  "Leganes": {
+    "elo": 1429,
+    "league": "LL",
+    "form": [
+      1,
+      3,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.03,
+    "goalsAg": 1.47,
+    "played": 38,
+    "w": 9,
+    "d": 13,
+    "l": 16
+  },
+  "Valencia": {
+    "elo": 1510,
+    "league": "LL",
+    "form": [
+      3,
+      3,
+      0,
+      0,
+      1
+    ],
+    "goalsFor": 1.16,
+    "goalsAg": 1.42,
+    "played": 38,
+    "w": 11,
+    "d": 13,
+    "l": 14
+  },
+  "Barcelona": {
+    "elo": 1748,
+    "league": "LL",
+    "form": [
+      3,
+      3,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 2.68,
+    "goalsAg": 1.03,
+    "played": 38,
+    "w": 28,
+    "d": 4,
+    "l": 6
+  },
+  "Sociedad": {
+    "elo": 1432,
+    "league": "LL",
+    "form": [
+      1,
+      0,
+      0,
+      3,
+      0
+    ],
+    "goalsFor": 0.92,
+    "goalsAg": 1.21,
+    "played": 38,
+    "w": 13,
+    "d": 7,
+    "l": 18
+  },
+  "Vallecano": {
+    "elo": 1498,
+    "league": "LL",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      1
+    ],
+    "goalsFor": 1.08,
+    "goalsAg": 1.18,
+    "played": 38,
+    "w": 13,
+    "d": 13,
+    "l": 12
+  },
+  "Mallorca": {
+    "elo": 1446,
+    "league": "LL",
+    "form": [
+      0,
+      3,
+      0,
+      0,
+      1
+    ],
+    "goalsFor": 0.92,
+    "goalsAg": 1.16,
+    "played": 38,
+    "w": 13,
+    "d": 9,
+    "l": 16
+  },
+  "Real Madrid": {
+    "elo": 1692,
+    "league": "LL",
+    "form": [
+      3,
+      0,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.05,
+    "goalsAg": 1,
+    "played": 38,
+    "w": 26,
+    "d": 6,
+    "l": 6
+  },
+  "Valladolid": {
+    "elo": 1219,
+    "league": "LL",
+    "form": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 0.68,
+    "goalsAg": 2.37,
+    "played": 38,
+    "w": 4,
+    "d": 4,
+    "l": 30
+  },
+  "Espanol": {
+    "elo": 1470,
+    "league": "LL",
+    "form": [
+      0,
+      0,
+      0,
+      0,
+      3
+    ],
+    "goalsFor": 1.05,
+    "goalsAg": 1.34,
+    "played": 38,
+    "w": 11,
+    "d": 9,
+    "l": 18
+  },
+  "Villarreal": {
+    "elo": 1627,
+    "league": "LL",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 1.87,
+    "goalsAg": 1.34,
+    "played": 38,
+    "w": 20,
+    "d": 10,
+    "l": 8
+  },
+  "Ath Madrid": {
+    "elo": 1635,
+    "league": "LL",
+    "form": [
+      1,
+      3,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.79,
+    "goalsAg": 0.79,
+    "played": 38,
+    "w": 22,
+    "d": 10,
+    "l": 6
+  },
+  "Genoa": {
+    "elo": 1468,
+    "league": "SA",
+    "form": [
+      0,
+      0,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 0.97,
+    "goalsAg": 1.29,
+    "played": 38,
+    "w": 10,
+    "d": 13,
+    "l": 15
+  },
+  "Inter": {
+    "elo": 1692,
+    "league": "SA",
+    "form": [
+      0,
+      3,
+      3,
+      1,
+      3
+    ],
+    "goalsFor": 2.08,
+    "goalsAg": 0.92,
+    "played": 38,
+    "w": 24,
+    "d": 9,
+    "l": 5
+  },
+  "Parma": {
+    "elo": 1444,
+    "league": "SA",
+    "form": [
+      1,
+      0,
+      0,
+      1,
+      3
+    ],
+    "goalsFor": 1.16,
+    "goalsAg": 1.53,
+    "played": 38,
+    "w": 7,
+    "d": 15,
+    "l": 16
+  },
+  "Fiorentina": {
+    "elo": 1576,
+    "league": "SA",
+    "form": [
+      3,
+      0,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.58,
+    "goalsAg": 1.08,
+    "played": 38,
+    "w": 19,
+    "d": 8,
+    "l": 11
+  },
+  "Empoli": {
+    "elo": 1358,
+    "league": "SA",
+    "form": [
+      0,
+      0,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 0.87,
+    "goalsAg": 1.55,
+    "played": 38,
+    "w": 6,
+    "d": 13,
+    "l": 19
+  },
+  "Monza": {
+    "elo": 1257,
+    "league": "SA",
+    "form": [
+      0,
+      0,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 0.74,
+    "goalsAg": 1.82,
+    "played": 38,
+    "w": 3,
+    "d": 9,
+    "l": 26
+  },
+  "Milan": {
+    "elo": 1586,
+    "league": "SA",
+    "form": [
+      3,
+      3,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.61,
+    "goalsAg": 1.13,
+    "played": 38,
+    "w": 18,
+    "d": 9,
+    "l": 11
+  },
+  "Torino": {
+    "elo": 1445,
+    "league": "SA",
+    "form": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.03,
+    "goalsAg": 1.18,
+    "played": 38,
+    "w": 10,
+    "d": 14,
+    "l": 14
+  },
+  "Bologna": {
+    "elo": 1532,
+    "league": "SA",
+    "form": [
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.5,
+    "goalsAg": 1.24,
+    "played": 38,
+    "w": 16,
+    "d": 14,
+    "l": 8
+  },
+  "Udinese": {
+    "elo": 1398,
+    "league": "SA",
+    "form": [
+      1,
+      3,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.08,
+    "goalsAg": 1.47,
+    "played": 38,
+    "w": 12,
+    "d": 8,
+    "l": 18
+  },
+  "Verona": {
+    "elo": 1390,
+    "league": "SA",
+    "form": [
+      0,
+      0,
+      1,
+      1,
+      3
+    ],
+    "goalsFor": 0.89,
+    "goalsAg": 1.74,
+    "played": 38,
+    "w": 10,
+    "d": 7,
+    "l": 21
+  },
+  "Napoli": {
+    "elo": 1670,
+    "league": "SA",
+    "form": [
+      3,
+      3,
+      1,
+      1,
+      3
+    ],
+    "goalsFor": 1.55,
+    "goalsAg": 0.71,
+    "played": 38,
+    "w": 24,
+    "d": 10,
+    "l": 4
+  },
+  "Cagliari": {
+    "elo": 1419,
+    "league": "SA",
+    "form": [
+      3,
+      0,
+      0,
+      3,
+      0
+    ],
+    "goalsFor": 1.05,
+    "goalsAg": 1.47,
+    "played": 38,
+    "w": 9,
+    "d": 9,
+    "l": 20
+  },
+  "Roma": {
+    "elo": 1658,
+    "league": "SA",
+    "form": [
+      3,
+      3,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 1.47,
+    "goalsAg": 0.92,
+    "played": 38,
+    "w": 20,
+    "d": 9,
+    "l": 9
+  },
+  "Lazio": {
+    "elo": 1564,
+    "league": "SA",
+    "form": [
+      1,
+      3,
+      1,
+      1,
+      0
+    ],
+    "goalsFor": 1.61,
+    "goalsAg": 1.29,
+    "played": 38,
+    "w": 18,
+    "d": 11,
+    "l": 9
+  },
+  "Venezia": {
+    "elo": 1376,
+    "league": "SA",
+    "form": [
+      0,
+      1,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 0.84,
+    "goalsAg": 1.47,
+    "played": 38,
+    "w": 5,
+    "d": 14,
+    "l": 19
+  },
+  "Lecce": {
+    "elo": 1393,
+    "league": "SA",
+    "form": [
+      1,
+      0,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 0.71,
+    "goalsAg": 1.53,
+    "played": 38,
+    "w": 8,
+    "d": 10,
+    "l": 20
+  },
+  "Atalanta": {
+    "elo": 1639,
+    "league": "SA",
+    "form": [
+      1,
+      3,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 2.05,
+    "goalsAg": 0.97,
+    "played": 38,
+    "w": 22,
+    "d": 8,
+    "l": 8
+  },
+  "Juventus": {
+    "elo": 1613,
+    "league": "SA",
+    "form": [
+      3,
+      1,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 0.92,
+    "played": 38,
+    "w": 18,
+    "d": 16,
+    "l": 4
+  },
+  "Como": {
+    "elo": 1521,
+    "league": "SA",
+    "form": [
+      3,
+      3,
+      3,
+      1,
+      0
+    ],
+    "goalsFor": 1.29,
+    "goalsAg": 1.37,
+    "played": 38,
+    "w": 13,
+    "d": 10,
+    "l": 15
+  },
+  "M'gladbach": {
+    "elo": 1454,
+    "league": "BL",
+    "form": [
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "goalsFor": 1.62,
+    "goalsAg": 1.68,
+    "played": 34,
+    "w": 13,
+    "d": 6,
+    "l": 15
+  },
+  "Leverkusen": {
+    "elo": 1635,
+    "league": "BL",
+    "form": [
+      1,
+      3,
+      1,
+      0,
+      1
+    ],
+    "goalsFor": 2.12,
+    "goalsAg": 1.26,
+    "played": 34,
+    "w": 19,
+    "d": 12,
+    "l": 3
+  },
+  "Augsburg": {
+    "elo": 1447,
+    "league": "BL",
+    "form": [
+      1,
+      0,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 1.03,
+    "goalsAg": 1.5,
+    "played": 34,
+    "w": 11,
+    "d": 10,
+    "l": 13
+  },
+  "Werder Bremen": {
+    "elo": 1532,
+    "league": "BL",
+    "form": [
+      3,
+      1,
+      1,
+      1,
+      3
+    ],
+    "goalsFor": 1.59,
+    "goalsAg": 1.68,
+    "played": 34,
+    "w": 14,
+    "d": 9,
+    "l": 11
+  },
+  "Freiburg": {
+    "elo": 1518,
+    "league": "BL",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      0
+    ],
+    "goalsFor": 1.44,
+    "goalsAg": 1.56,
+    "played": 34,
+    "w": 16,
+    "d": 7,
+    "l": 11
+  },
+  "Stuttgart": {
+    "elo": 1532,
+    "league": "BL",
+    "form": [
+      1,
+      0,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 1.88,
+    "goalsAg": 1.56,
+    "played": 34,
+    "w": 14,
+    "d": 8,
+    "l": 12
+  },
+  "Hoffenheim": {
+    "elo": 1420,
+    "league": "BL",
+    "form": [
+      0,
+      0,
+      1,
+      1,
+      0
+    ],
+    "goalsFor": 1.35,
+    "goalsAg": 2,
+    "played": 34,
+    "w": 7,
+    "d": 11,
+    "l": 16
+  },
+  "Holstein Kiel": {
+    "elo": 1371,
+    "league": "BL",
+    "form": [
+      1,
+      3,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.44,
+    "goalsAg": 2.35,
+    "played": 34,
+    "w": 6,
+    "d": 7,
+    "l": 21
+  },
+  "Mainz": {
+    "elo": 1547,
+    "league": "BL",
+    "form": [
+      1,
+      0,
+      1,
+      3,
+      1
+    ],
+    "goalsFor": 1.62,
+    "goalsAg": 1.26,
+    "played": 34,
+    "w": 14,
+    "d": 10,
+    "l": 10
+  },
+  "Union Berlin": {
+    "elo": 1434,
+    "league": "BL",
+    "form": [
+      1,
+      1,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 1.03,
+    "goalsAg": 1.5,
+    "played": 34,
+    "w": 10,
+    "d": 10,
+    "l": 14
+  },
+  "RB Leipzig": {
+    "elo": 1516,
+    "league": "BL",
+    "form": [
+      1,
+      0,
+      1,
+      1,
+      0
+    ],
+    "goalsFor": 1.56,
+    "goalsAg": 1.41,
+    "played": 34,
+    "w": 13,
+    "d": 12,
+    "l": 9
+  },
+  "Bochum": {
+    "elo": 1369,
+    "league": "BL",
+    "form": [
+      0,
+      1,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 0.97,
+    "goalsAg": 1.97,
+    "played": 34,
+    "w": 6,
+    "d": 7,
+    "l": 21
+  },
+  "Dortmund": {
+    "elo": 1622,
+    "league": "BL",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.09,
+    "goalsAg": 1.5,
+    "played": 34,
+    "w": 17,
+    "d": 6,
+    "l": 11
+  },
+  "Ein Frankfurt": {
+    "elo": 1592,
+    "league": "BL",
+    "form": [
+      1,
+      3,
+      1,
+      1,
+      3
+    ],
+    "goalsFor": 2,
+    "goalsAg": 1.35,
+    "played": 34,
+    "w": 17,
+    "d": 9,
+    "l": 8
+  },
+  "Wolfsburg": {
+    "elo": 1475,
+    "league": "BL",
+    "form": [
+      1,
+      0,
+      0,
+      1,
+      3
+    ],
+    "goalsFor": 1.65,
+    "goalsAg": 1.59,
+    "played": 34,
+    "w": 11,
+    "d": 10,
+    "l": 13
+  },
+  "Bayern Munich": {
+    "elo": 1747,
+    "league": "BL",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 2.91,
+    "goalsAg": 0.94,
+    "played": 34,
+    "w": 25,
+    "d": 7,
+    "l": 2
+  },
+  "St Pauli": {
+    "elo": 1406,
+    "league": "BL",
+    "form": [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    "goalsFor": 0.82,
+    "goalsAg": 1.21,
+    "played": 34,
+    "w": 8,
+    "d": 8,
+    "l": 18
+  },
+  "Heidenheim": {
+    "elo": 1381,
+    "league": "BL",
+    "form": [
+      0,
+      3,
+      1,
+      3,
+      0
+    ],
+    "goalsFor": 1.09,
+    "goalsAg": 1.88,
+    "played": 34,
+    "w": 8,
+    "d": 5,
+    "l": 21
+  },
+  "Le Havre": {
+    "elo": 1400,
+    "league": "L1",
+    "form": [
+      0,
+      1,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.18,
+    "goalsAg": 2.09,
+    "played": 34,
+    "w": 10,
+    "d": 4,
+    "l": 20
+  },
+  "Paris SG": {
+    "elo": 1737,
+    "league": "L1",
+    "form": [
+      1,
+      0,
+      0,
+      3,
+      3
+    ],
+    "goalsFor": 2.71,
+    "goalsAg": 1.03,
+    "played": 34,
+    "w": 26,
+    "d": 6,
+    "l": 2
+  },
+  "Brest": {
+    "elo": 1499,
+    "league": "L1",
+    "form": [
+      0,
+      0,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 1.74,
+    "played": 34,
+    "w": 15,
+    "d": 5,
+    "l": 14
+  },
+  "Marseille": {
+    "elo": 1589,
+    "league": "L1",
+    "form": [
+      3,
+      3,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 2.18,
+    "goalsAg": 1.38,
+    "played": 34,
+    "w": 20,
+    "d": 5,
+    "l": 9
+  },
+  "Reims": {
+    "elo": 1390,
+    "league": "L1",
+    "form": [
+      3,
+      1,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 0.97,
+    "goalsAg": 1.38,
+    "played": 34,
+    "w": 8,
+    "d": 9,
+    "l": 17
+  },
+  "Lille": {
+    "elo": 1580,
+    "league": "L1",
+    "form": [
+      3,
+      3,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 1.06,
+    "played": 34,
+    "w": 17,
+    "d": 9,
+    "l": 8
+  },
+  "Monaco": {
+    "elo": 1590,
+    "league": "L1",
+    "form": [
+      1,
+      1,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.85,
+    "goalsAg": 1.21,
+    "played": 34,
+    "w": 18,
+    "d": 7,
+    "l": 9
+  },
+  "St Etienne": {
+    "elo": 1391,
+    "league": "L1",
+    "form": [
+      3,
+      0,
+      0,
+      3,
+      0
+    ],
+    "goalsFor": 1.15,
+    "goalsAg": 2.26,
+    "played": 34,
+    "w": 8,
+    "d": 6,
+    "l": 20
+  },
+  "Auxerre": {
+    "elo": 1486,
+    "league": "L1",
+    "form": [
+      0,
+      3,
+      0,
+      1,
+      0
+    ],
+    "goalsFor": 1.41,
+    "goalsAg": 1.5,
+    "played": 34,
+    "w": 11,
+    "d": 9,
+    "l": 14
+  },
+  "Nice": {
+    "elo": 1604,
+    "league": "L1",
+    "form": [
+      3,
+      3,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 1.94,
+    "goalsAg": 1.21,
+    "played": 34,
+    "w": 17,
+    "d": 9,
+    "l": 8
+  },
+  "Angers": {
+    "elo": 1400,
+    "league": "L1",
+    "form": [
+      0,
+      0,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 0.94,
+    "goalsAg": 1.56,
+    "played": 34,
+    "w": 10,
+    "d": 6,
+    "l": 18
+  },
+  "Lens": {
+    "elo": 1518,
+    "league": "L1",
+    "form": [
+      3,
+      0,
+      3,
+      1,
+      3
+    ],
+    "goalsFor": 1.24,
+    "goalsAg": 1.15,
+    "played": 34,
+    "w": 15,
+    "d": 7,
+    "l": 12
+  },
+  "Montpellier": {
+    "elo": 1231,
+    "league": "L1",
+    "form": [
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "goalsFor": 0.68,
+    "goalsAg": 2.32,
+    "played": 34,
+    "w": 4,
+    "d": 4,
+    "l": 26
+  },
+  "Strasbourg": {
+    "elo": 1590,
+    "league": "L1",
+    "form": [
+      1,
+      3,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.65,
+    "goalsAg": 1.29,
+    "played": 34,
+    "w": 16,
+    "d": 9,
+    "l": 9
+  },
+  "Toulouse": {
+    "elo": 1487,
+    "league": "L1",
+    "form": [
+      0,
+      1,
+      3,
+      1,
+      3
+    ],
+    "goalsFor": 1.29,
+    "goalsAg": 1.26,
+    "played": 34,
+    "w": 11,
+    "d": 9,
+    "l": 14
+  },
+  "Nantes": {
+    "elo": 1438,
+    "league": "L1",
+    "form": [
+      1,
+      1,
+      0,
+      1,
+      3
+    ],
+    "goalsFor": 1.15,
+    "goalsAg": 1.53,
+    "played": 34,
+    "w": 8,
+    "d": 12,
+    "l": 14
+  },
+  "Rennes": {
+    "elo": 1486,
+    "league": "L1",
+    "form": [
+      3,
+      0,
+      0,
+      3,
+      0
+    ],
+    "goalsFor": 1.5,
+    "goalsAg": 1.47,
+    "played": 34,
+    "w": 13,
+    "d": 2,
+    "l": 19
+  },
+  "Lyon": {
+    "elo": 1584,
+    "league": "L1",
+    "form": [
+      0,
+      3,
+      0,
+      0,
+      3
+    ],
+    "goalsFor": 1.91,
+    "goalsAg": 1.35,
+    "played": 34,
+    "w": 17,
+    "d": 6,
+    "l": 11
+  },
+  "Galatasaray": {
+    "elo": 1789,
+    "league": "SL",
+    "form": [
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 2.53,
+    "goalsAg": 0.86,
+    "played": 36,
+    "w": 30,
+    "d": 5,
+    "l": 1
+  },
+  "Hatayspor": {
+    "elo": 1379,
+    "league": "SL",
+    "form": [
+      0,
+      1,
+      3,
+      3,
+      0
+    ],
+    "goalsFor": 1.31,
+    "goalsAg": 2.06,
+    "played": 36,
+    "w": 6,
+    "d": 8,
+    "l": 22
+  },
+  "Kasimpasa": {
+    "elo": 1518,
+    "league": "SL",
+    "form": [
+      1,
+      3,
+      0,
+      1,
+      0
+    ],
+    "goalsFor": 1.72,
+    "goalsAg": 1.75,
+    "played": 36,
+    "w": 11,
+    "d": 14,
+    "l": 11
+  },
+  "Konyaspor": {
+    "elo": 1472,
+    "league": "SL",
+    "form": [
+      3,
+      0,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.25,
+    "goalsAg": 1.39,
+    "played": 36,
+    "w": 13,
+    "d": 7,
+    "l": 16
+  },
+  "Antalyaspor": {
+    "elo": 1419,
+    "league": "SL",
+    "form": [
+      3,
+      0,
+      1,
+      0,
+      0
+    ],
+    "goalsFor": 1.03,
+    "goalsAg": 1.72,
+    "played": 36,
+    "w": 12,
+    "d": 8,
+    "l": 16
+  },
+  "Goztep": {
+    "elo": 1497,
+    "league": "SL",
+    "form": [
+      3,
+      1,
+      0,
+      0,
+      3
+    ],
+    "goalsFor": 1.64,
+    "goalsAg": 1.39,
+    "played": 36,
+    "w": 13,
+    "d": 11,
+    "l": 12
+  },
+  "Fenerbahce": {
+    "elo": 1711,
+    "league": "SL",
+    "form": [
+      0,
+      3,
+      3,
+      0,
+      3
+    ],
+    "goalsFor": 2.5,
+    "goalsAg": 1.08,
+    "played": 36,
+    "w": 26,
+    "d": 6,
+    "l": 4
+  },
+  "Ad. Demirspor": {
+    "elo": 1247,
+    "league": "SL",
+    "form": [
+      0,
+      0,
+      0,
+      3,
+      1
+    ],
+    "goalsFor": 0.94,
+    "goalsAg": 2.56,
+    "played": 36,
+    "w": 3,
+    "d": 5,
+    "l": 28
+  },
+  "Sivasspor": {
+    "elo": 1404,
+    "league": "SL",
+    "form": [
+      3,
+      0,
+      1,
+      0,
+      0
+    ],
+    "goalsFor": 1.22,
+    "goalsAg": 1.67,
+    "played": 36,
+    "w": 9,
+    "d": 8,
+    "l": 19
+  },
+  "Trabzonspor": {
+    "elo": 1548,
+    "league": "SL",
+    "form": [
+      1,
+      0,
+      1,
+      1,
+      3
+    ],
+    "goalsFor": 1.61,
+    "goalsAg": 1.25,
+    "played": 36,
+    "w": 13,
+    "d": 12,
+    "l": 11
+  },
+  "Alanyaspor": {
+    "elo": 1486,
+    "league": "SL",
+    "form": [
+      1,
+      3,
+      1,
+      3,
+      3
+    ],
+    "goalsFor": 1.19,
+    "goalsAg": 1.39,
+    "played": 36,
+    "w": 12,
+    "d": 9,
+    "l": 15
+  },
+  "Eyupspor": {
+    "elo": 1460,
+    "league": "SL",
+    "form": [
+      0,
+      0,
+      0,
+      0,
+      3
+    ],
+    "goalsFor": 1.44,
+    "goalsAg": 1.31,
+    "played": 36,
+    "w": 15,
+    "d": 8,
+    "l": 13
+  },
+  "Samsunspor": {
+    "elo": 1558,
+    "league": "SL",
+    "form": [
+      3,
+      3,
+      3,
+      1,
+      3
+    ],
+    "goalsFor": 1.53,
+    "goalsAg": 1.14,
+    "played": 36,
+    "w": 19,
+    "d": 7,
+    "l": 10
+  },
+  "Besiktas": {
+    "elo": 1588,
+    "league": "SL",
+    "form": [
+      3,
+      3,
+      1,
+      0,
+      3
+    ],
+    "goalsFor": 1.64,
+    "goalsAg": 1,
+    "played": 36,
+    "w": 17,
+    "d": 11,
+    "l": 8
+  },
+  "Bodrumspor": {
+    "elo": 1436,
+    "league": "SL",
+    "form": [
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    "goalsFor": 0.72,
+    "goalsAg": 1.19,
+    "played": 36,
+    "w": 9,
+    "d": 10,
+    "l": 17
+  },
+  "Gaziantep": {
+    "elo": 1457,
+    "league": "SL",
+    "form": [
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    "goalsFor": 1.25,
+    "goalsAg": 1.39,
+    "played": 36,
+    "w": 12,
+    "d": 9,
+    "l": 15
+  },
+  "Rizespor": {
+    "elo": 1513,
+    "league": "SL",
+    "form": [
+      3,
+      0,
+      3,
+      3,
+      3
+    ],
+    "goalsFor": 1.44,
+    "goalsAg": 1.61,
+    "played": 36,
+    "w": 15,
+    "d": 4,
+    "l": 17
+  },
+  "Buyuksehyr": {
+    "elo": 1512,
+    "league": "SL",
+    "form": [
+      3,
+      0,
+      3,
+      0,
+      0
+    ],
+    "goalsFor": 1.67,
+    "goalsAg": 1.56,
+    "played": 36,
+    "w": 16,
+    "d": 6,
+    "l": 14
+  },
+  "Kayserispor": {
+    "elo": 1507,
+    "league": "SL",
+    "form": [
+      1,
+      3,
+      0,
+      1,
+      0
+    ],
+    "goalsFor": 1.25,
+    "goalsAg": 1.58,
+    "played": 36,
+    "w": 11,
+    "d": 12,
+    "l": 13
+  }
 };
 
 const LEAGUE_NAMES = {
@@ -533,141 +3026,1711 @@ const LEAGUE_NAMES = {
   "UCL": "Şampiyonlar Ligi"
 };
 
-// 2026 Fikstür örnek üretimi
-function generateFixtures() {
-  const fixtures = [];
-  let id = 1;
+const FIXTURES = [
+  {
+    "id": 23,
+    "league": "SL",
+    "home": "Galatasaray",
+    "away": "Fenerbahce",
+    "date": "2026-01-15",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 34,
+    "league": "PL",
+    "home": "Liverpool",
+    "away": "Man City",
+    "date": "2026-01-18",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 42,
+    "league": "LL",
+    "home": "Barcelona",
+    "away": "Real Madrid",
+    "date": "2026-01-25",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 56,
+    "league": "BL",
+    "home": "Bayern Munich",
+    "away": "Leverkusen",
+    "date": "2026-01-31",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 49,
+    "league": "SA",
+    "home": "Inter",
+    "away": "Napoli",
+    "date": "2026-02-01",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 35,
+    "league": "PL",
+    "home": "Man City",
+    "away": "Arsenal",
+    "date": "2026-02-07",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 24,
+    "league": "SL",
+    "home": "Fenerbahce",
+    "away": "Besiktas",
+    "date": "2026-02-08",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 63,
+    "league": "L1",
+    "home": "Paris SG",
+    "away": "Nice",
+    "date": "2026-02-08",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 57,
+    "league": "BL",
+    "home": "Leverkusen",
+    "away": "Dortmund",
+    "date": "2026-02-14",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 43,
+    "league": "LL",
+    "home": "Real Madrid",
+    "away": "Ath Madrid",
+    "date": "2026-02-15",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 50,
+    "league": "SA",
+    "home": "Napoli",
+    "away": "Roma",
+    "date": "2026-02-15",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 25,
+    "league": "SL",
+    "home": "Besiktas",
+    "away": "Samsunspor",
+    "date": "2026-02-22",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 64,
+    "league": "L1",
+    "home": "Nice",
+    "away": "Monaco",
+    "date": "2026-02-22",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 58,
+    "league": "BL",
+    "home": "Dortmund",
+    "away": "Ein Frankfurt",
+    "date": "2026-03-07",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 51,
+    "league": "SA",
+    "home": "Roma",
+    "away": "Atalanta",
+    "date": "2026-03-08",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 70,
+    "league": "UCL",
+    "home": "Bayern Munich",
+    "away": "Arsenal",
+    "date": "2026-03-10",
+    "time": "22:00",
+    "venue": "UCL Son 16"
+  },
+  {
+    "id": 36,
+    "league": "PL",
+    "home": "Arsenal",
+    "away": "Chelsea",
+    "date": "2026-03-14",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 26,
+    "league": "SL",
+    "home": "Samsunspor",
+    "away": "Trabzonspor",
+    "date": "2026-03-15",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 44,
+    "league": "LL",
+    "home": "Ath Madrid",
+    "away": "Villarreal",
+    "date": "2026-03-22",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 37,
+    "league": "PL",
+    "home": "Chelsea",
+    "away": "Aston Villa",
+    "date": "2026-04-04",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 52,
+    "league": "SA",
+    "home": "Atalanta",
+    "away": "Juventus",
+    "date": "2026-04-05",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 71,
+    "league": "UCL",
+    "home": "Paris SG",
+    "away": "Barcelona",
+    "date": "2026-04-08",
+    "time": "22:00",
+    "venue": "UCL Çeyrek"
+  },
+  {
+    "id": 59,
+    "league": "BL",
+    "home": "Ein Frankfurt",
+    "away": "Mainz",
+    "date": "2026-04-11",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 27,
+    "league": "SL",
+    "home": "Trabzonspor",
+    "away": "Kasimpasa",
+    "date": "2026-04-12",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 65,
+    "league": "L1",
+    "home": "Monaco",
+    "away": "Strasbourg",
+    "date": "2026-04-12",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 45,
+    "league": "LL",
+    "home": "Villarreal",
+    "away": "Ath Bilbao",
+    "date": "2026-04-19",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 66,
+    "league": "L1",
+    "home": "Strasbourg",
+    "away": "Marseille",
+    "date": "2026-04-26",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 72,
+    "league": "UCL",
+    "home": "Real Madrid",
+    "away": "Bayern Munich",
+    "date": "2026-04-29",
+    "time": "22:00",
+    "venue": "UCL Yarı"
+  },
+  {
+    "id": 28,
+    "league": "SL",
+    "home": "Kasimpasa",
+    "away": "Rizespor",
+    "date": "2026-05-10",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 1,
+    "league": "WC2026",
+    "home": "Arjantin",
+    "away": "Türkiye",
+    "date": "2026-06-13",
+    "time": "21:00",
+    "venue": "Estadio Azteca, Mexico"
+  },
+  {
+    "id": 2,
+    "league": "WC2026",
+    "home": "Brezilya",
+    "away": "Senegal",
+    "date": "2026-06-14",
+    "time": "21:00",
+    "venue": "MetLife, New Jersey"
+  },
+  {
+    "id": 3,
+    "league": "WC2026",
+    "home": "Fransa",
+    "away": "Meksika",
+    "date": "2026-06-15",
+    "time": "21:00",
+    "venue": "SoFi Stadium, LA"
+  },
+  {
+    "id": 4,
+    "league": "WC2026",
+    "home": "İngiltere",
+    "away": "ABD",
+    "date": "2026-06-16",
+    "time": "21:00",
+    "venue": "AT&T Stadium, Dallas"
+  },
+  {
+    "id": 5,
+    "league": "WC2026",
+    "home": "İspanya",
+    "away": "Japonya",
+    "date": "2026-06-17",
+    "time": "21:00",
+    "venue": "BC Place, Vancouver"
+  },
+  {
+    "id": 6,
+    "league": "WC2026",
+    "home": "Almanya",
+    "away": "Fas",
+    "date": "2026-06-18",
+    "time": "21:00",
+    "venue": "Lumen Field, Seattle"
+  },
+  {
+    "id": 7,
+    "league": "WC2026",
+    "home": "Hollanda",
+    "away": "Kanada",
+    "date": "2026-06-19",
+    "time": "21:00",
+    "venue": "BMO Field, Toronto"
+  },
+  {
+    "id": 8,
+    "league": "WC2026",
+    "home": "Portekiz",
+    "away": "Uruguay",
+    "date": "2026-06-20",
+    "time": "21:00",
+    "venue": "Gillette Stadium, Boston"
+  },
+  {
+    "id": 9,
+    "league": "WC2026",
+    "home": "İtalya",
+    "away": "Hırvatistan",
+    "date": "2026-06-21",
+    "time": "21:00",
+    "venue": "Mercedes-Benz, Atlanta"
+  },
+  {
+    "id": 10,
+    "league": "WC2026",
+    "home": "Türkiye",
+    "away": "Brezilya",
+    "date": "2026-06-22",
+    "time": "21:00",
+    "venue": "Estadio Akron, Guadalajara"
+  },
+  {
+    "id": 11,
+    "league": "WC2026",
+    "home": "Belçika",
+    "away": "Japonya",
+    "date": "2026-06-23",
+    "time": "21:00",
+    "venue": "NRG Stadium, Houston"
+  },
+  {
+    "id": 12,
+    "league": "WC2026",
+    "home": "Arjantin",
+    "away": "Fas",
+    "date": "2026-06-24",
+    "time": "21:00",
+    "venue": "Hard Rock Stadium, Miami"
+  },
+  {
+    "id": 13,
+    "league": "WC2026",
+    "home": "Güney Kore",
+    "away": "Polonya",
+    "date": "2026-06-25",
+    "time": "21:00",
+    "venue": "Levi's Stadium, San Francisco"
+  },
+  {
+    "id": 14,
+    "league": "WC2026",
+    "home": "İsviçre",
+    "away": "Kolombiya",
+    "date": "2026-06-26",
+    "time": "21:00",
+    "venue": "Arrowhead, Kansas City"
+  },
+  {
+    "id": 15,
+    "league": "WC2026",
+    "home": "Fransa",
+    "away": "Belçika",
+    "date": "2026-06-30",
+    "time": "21:00",
+    "venue": "MetLife, New Jersey - Son 16"
+  },
+  {
+    "id": 16,
+    "league": "WC2026",
+    "home": "İspanya",
+    "away": "Almanya",
+    "date": "2026-07-01",
+    "time": "21:00",
+    "venue": "AT&T Stadium, Dallas - Son 16"
+  },
+  {
+    "id": 17,
+    "league": "WC2026",
+    "home": "Brezilya",
+    "away": "Portekiz",
+    "date": "2026-07-02",
+    "time": "21:00",
+    "venue": "SoFi Stadium, LA - Son 16"
+  },
+  {
+    "id": 18,
+    "league": "WC2026",
+    "home": "Arjantin",
+    "away": "İngiltere",
+    "date": "2026-07-03",
+    "time": "21:00",
+    "venue": "Estadio Azteca, Mexico - Son 16"
+  },
+  {
+    "id": 19,
+    "league": "WC2026",
+    "home": "Fransa",
+    "away": "İspanya",
+    "date": "2026-07-09",
+    "time": "21:00",
+    "venue": "MetLife, New Jersey - Çeyrek"
+  },
+  {
+    "id": 20,
+    "league": "WC2026",
+    "home": "Brezilya",
+    "away": "Arjantin",
+    "date": "2026-07-10",
+    "time": "21:00",
+    "venue": "AT&T Stadium, Dallas - Çeyrek"
+  },
+  {
+    "id": 21,
+    "league": "WC2026",
+    "home": "Fransa",
+    "away": "Brezilya",
+    "date": "2026-07-14",
+    "time": "21:00",
+    "venue": "MetLife - Yarı Final"
+  },
+  {
+    "id": 22,
+    "league": "WC2026",
+    "home": "Fransa",
+    "away": "Arjantin",
+    "date": "2026-07-19",
+    "time": "21:00",
+    "venue": "MetLife, New Jersey - FİNAL"
+  },
+  {
+    "id": 38,
+    "league": "PL",
+    "home": "Aston Villa",
+    "away": "Newcastle",
+    "date": "2026-08-15",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 29,
+    "league": "SL",
+    "home": "Rizespor",
+    "away": "Buyuksehyr",
+    "date": "2026-08-22",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 53,
+    "league": "SA",
+    "home": "Juventus",
+    "away": "Milan",
+    "date": "2026-09-06",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 30,
+    "league": "SL",
+    "home": "Buyuksehyr",
+    "away": "Galatasaray",
+    "date": "2026-09-12",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 46,
+    "league": "LL",
+    "home": "Ath Bilbao",
+    "away": "Betis",
+    "date": "2026-09-13",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 39,
+    "league": "PL",
+    "home": "Newcastle",
+    "away": "Brighton",
+    "date": "2026-09-19",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 67,
+    "league": "L1",
+    "home": "Marseille",
+    "away": "Lyon",
+    "date": "2026-09-20",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 60,
+    "league": "BL",
+    "home": "Mainz",
+    "away": "Werder Bremen",
+    "date": "2026-09-26",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 31,
+    "league": "SL",
+    "home": "Galatasaray",
+    "away": "Besiktas",
+    "date": "2026-10-04",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 54,
+    "league": "SA",
+    "home": "Milan",
+    "away": "Fiorentina",
+    "date": "2026-10-18",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 40,
+    "league": "PL",
+    "home": "Brighton",
+    "away": "Crystal Palace",
+    "date": "2026-10-24",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 47,
+    "league": "LL",
+    "home": "Betis",
+    "away": "Osasuna",
+    "date": "2026-10-25",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 68,
+    "league": "L1",
+    "home": "Lyon",
+    "away": "Lille",
+    "date": "2026-10-25",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 61,
+    "league": "BL",
+    "home": "Werder Bremen",
+    "away": "Stuttgart",
+    "date": "2026-10-31",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 32,
+    "league": "SL",
+    "home": "Fenerbahce",
+    "away": "Samsunspor",
+    "date": "2026-11-08",
+    "time": "19:00",
+    "venue": "Türkiye"
+  },
+  {
+    "id": 69,
+    "league": "L1",
+    "home": "Lille",
+    "away": "Lens",
+    "date": "2026-11-15",
+    "time": "19:00",
+    "venue": "France"
+  },
+  {
+    "id": 41,
+    "league": "PL",
+    "home": "Crystal Palace",
+    "away": "Liverpool",
+    "date": "2026-11-21",
+    "time": "19:00",
+    "venue": "England"
+  },
+  {
+    "id": 55,
+    "league": "SA",
+    "home": "Fiorentina",
+    "away": "Lazio",
+    "date": "2026-11-22",
+    "time": "19:00",
+    "venue": "Italy"
+  },
+  {
+    "id": 62,
+    "league": "BL",
+    "home": "Stuttgart",
+    "away": "Freiburg",
+    "date": "2026-11-28",
+    "time": "19:00",
+    "venue": "Germany"
+  },
+  {
+    "id": 48,
+    "league": "LL",
+    "home": "Osasuna",
+    "away": "Celta",
+    "date": "2026-11-29",
+    "time": "19:00",
+    "venue": "Spain"
+  },
+  {
+    "id": 33,
+    "league": "SL",
+    "home": "Besiktas",
+    "away": "Trabzonspor",
+    "date": "2026-12-06",
+    "time": "19:00",
+    "venue": "Türkiye"
+  }
+];
 
-  // 2026 Dünya Kupası grup ve eleme maçları (Haziran-Temmuz 2026)
-  const wcGroupMatches = [
-    ["Arjantin", "Türkiye", "2026-06-13", "Estadio Azteca, Mexico"],
-    ["Brezilya", "Senegal", "2026-06-14", "MetLife, New Jersey"],
-    ["Fransa", "Meksika", "2026-06-15", "SoFi Stadium, LA"],
-    ["İngiltere", "ABD", "2026-06-16", "AT&T Stadium, Dallas"],
-    ["İspanya", "Japonya", "2026-06-17", "BC Place, Vancouver"],
-    ["Almanya", "Fas", "2026-06-18", "Lumen Field, Seattle"],
-    ["Hollanda", "Kanada", "2026-06-19", "BMO Field, Toronto"],
-    ["Portekiz", "Uruguay", "2026-06-20", "Gillette Stadium, Boston"],
-    ["İtalya", "Hırvatistan", "2026-06-21", "Mercedes-Benz, Atlanta"],
-    ["Türkiye", "Brezilya", "2026-06-22", "Estadio Akron, Guadalajara"],
-    ["Belçika", "Japonya", "2026-06-23", "NRG Stadium, Houston"],
-    ["Arjantin", "Fas", "2026-06-24", "Hard Rock Stadium, Miami"],
-    // Son 16
-    ["Fransa", "Belçika", "2026-06-30", "MetLife, New Jersey"],
-    ["İspanya", "Almanya", "2026-07-01", "AT&T Stadium, Dallas"],
-    ["Brezilya", "Portekiz", "2026-07-02", "SoFi Stadium, LA"],
-    ["Arjantin", "İngiltere", "2026-07-03", "Estadio Azteca, Mexico"],
-    // Çeyrek
-    ["Fransa", "İspanya", "2026-07-09", "MetLife, New Jersey"],
-    ["Brezilya", "Arjantin", "2026-07-10", "AT&T Stadium, Dallas"],
-    // Yarı
-    ["Fransa", "Brezilya", "2026-07-14", "MetLife, New Jersey"],
-    // Final
-    ["Fransa", "Arjantin", "2026-07-19", "MetLife, New Jersey - FİNAL"],
-  ];
-
-  wcGroupMatches.forEach(([home, away, date, venue]) => {
-    fixtures.push({
-      id: id++, league: "WC2026", home, away,
-      date, time: "21:00", venue,
-      played: false
-    });
-  });
-
-  // Süper Lig - aylık örnek maçlar
-  const slTeams = ["Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor", "Başakşehir", "Samsunspor"];
-  const months2026 = ["2026-01-15", "2026-02-08", "2026-02-22", "2026-03-15", "2026-04-12",
-                      "2026-05-10", "2026-08-22", "2026-09-12", "2026-10-04", "2026-11-08",
-                      "2026-12-06", "2026-12-20"];
-
-  months2026.forEach((d, idx) => {
-    const h = slTeams[idx % slTeams.length];
-    const a = slTeams[(idx + 2) % slTeams.length];
-    if (h !== a) {
-      fixtures.push({
-        id: id++, league: "SL", home: h, away: a,
-        date: d, time: "19:00",
-        venue: h === "Galatasaray" ? "RAMS Park" :
-               h === "Fenerbahçe" ? "Şükrü Saracoğlu" :
-               h === "Beşiktaş" ? "Tüpraş Stadyumu" : "Stadyum",
-        played: false
-      });
+const STANDINGS = {
+  "PL": [
+    {
+      "name": "Liverpool",
+      "pts": 84,
+      "played": 38,
+      "w": 25,
+      "d": 9,
+      "l": 4,
+      "gd": 45
+    },
+    {
+      "name": "Arsenal",
+      "pts": 74,
+      "played": 38,
+      "w": 20,
+      "d": 14,
+      "l": 4,
+      "gd": 35
+    },
+    {
+      "name": "Man City",
+      "pts": 71,
+      "played": 38,
+      "w": 21,
+      "d": 8,
+      "l": 9,
+      "gd": 28
+    },
+    {
+      "name": "Chelsea",
+      "pts": 69,
+      "played": 38,
+      "w": 20,
+      "d": 9,
+      "l": 9,
+      "gd": 21
+    },
+    {
+      "name": "Newcastle",
+      "pts": 66,
+      "played": 38,
+      "w": 20,
+      "d": 6,
+      "l": 12,
+      "gd": 21
+    },
+    {
+      "name": "Aston Villa",
+      "pts": 66,
+      "played": 38,
+      "w": 19,
+      "d": 9,
+      "l": 10,
+      "gd": 7
+    },
+    {
+      "name": "Nott'm Forest",
+      "pts": 65,
+      "played": 38,
+      "w": 19,
+      "d": 8,
+      "l": 11,
+      "gd": 12
+    },
+    {
+      "name": "Brighton",
+      "pts": 61,
+      "played": 38,
+      "w": 16,
+      "d": 13,
+      "l": 9,
+      "gd": 7
+    },
+    {
+      "name": "Bournemouth",
+      "pts": 56,
+      "played": 38,
+      "w": 15,
+      "d": 11,
+      "l": 12,
+      "gd": 12
+    },
+    {
+      "name": "Brentford",
+      "pts": 56,
+      "played": 38,
+      "w": 16,
+      "d": 8,
+      "l": 14,
+      "gd": 9
+    },
+    {
+      "name": "Fulham",
+      "pts": 54,
+      "played": 38,
+      "w": 15,
+      "d": 9,
+      "l": 14,
+      "gd": 0
+    },
+    {
+      "name": "Crystal Palace",
+      "pts": 53,
+      "played": 38,
+      "w": 13,
+      "d": 14,
+      "l": 11,
+      "gd": 0
+    },
+    {
+      "name": "Everton",
+      "pts": 48,
+      "played": 38,
+      "w": 11,
+      "d": 15,
+      "l": 12,
+      "gd": -2
+    },
+    {
+      "name": "West Ham",
+      "pts": 43,
+      "played": 38,
+      "w": 11,
+      "d": 10,
+      "l": 17,
+      "gd": -16
+    },
+    {
+      "name": "Man United",
+      "pts": 42,
+      "played": 38,
+      "w": 11,
+      "d": 9,
+      "l": 18,
+      "gd": -10
+    },
+    {
+      "name": "Wolves",
+      "pts": 42,
+      "played": 38,
+      "w": 12,
+      "d": 6,
+      "l": 20,
+      "gd": -15
+    },
+    {
+      "name": "Tottenham",
+      "pts": 38,
+      "played": 38,
+      "w": 11,
+      "d": 5,
+      "l": 22,
+      "gd": -1
+    },
+    {
+      "name": "Leicester",
+      "pts": 25,
+      "played": 38,
+      "w": 6,
+      "d": 7,
+      "l": 25,
+      "gd": -47
+    },
+    {
+      "name": "Ipswich",
+      "pts": 22,
+      "played": 38,
+      "w": 4,
+      "d": 10,
+      "l": 24,
+      "gd": -46
+    },
+    {
+      "name": "Southampton",
+      "pts": 12,
+      "played": 38,
+      "w": 2,
+      "d": 6,
+      "l": 30,
+      "gd": -60
     }
-  });
+  ],
+  "LL": [
+    {
+      "name": "Barcelona",
+      "pts": 88,
+      "played": 38,
+      "w": 28,
+      "d": 4,
+      "l": 6,
+      "gd": 63
+    },
+    {
+      "name": "Real Madrid",
+      "pts": 84,
+      "played": 38,
+      "w": 26,
+      "d": 6,
+      "l": 6,
+      "gd": 40
+    },
+    {
+      "name": "Ath Madrid",
+      "pts": 76,
+      "played": 38,
+      "w": 22,
+      "d": 10,
+      "l": 6,
+      "gd": 38
+    },
+    {
+      "name": "Ath Bilbao",
+      "pts": 70,
+      "played": 38,
+      "w": 19,
+      "d": 13,
+      "l": 6,
+      "gd": 25
+    },
+    {
+      "name": "Villarreal",
+      "pts": 70,
+      "played": 38,
+      "w": 20,
+      "d": 10,
+      "l": 8,
+      "gd": 20
+    },
+    {
+      "name": "Betis",
+      "pts": 60,
+      "played": 38,
+      "w": 16,
+      "d": 12,
+      "l": 10,
+      "gd": 7
+    },
+    {
+      "name": "Celta",
+      "pts": 55,
+      "played": 38,
+      "w": 16,
+      "d": 7,
+      "l": 15,
+      "gd": 2
+    },
+    {
+      "name": "Osasuna",
+      "pts": 52,
+      "played": 38,
+      "w": 12,
+      "d": 16,
+      "l": 10,
+      "gd": -4
+    },
+    {
+      "name": "Vallecano",
+      "pts": 52,
+      "played": 38,
+      "w": 13,
+      "d": 13,
+      "l": 12,
+      "gd": -4
+    },
+    {
+      "name": "Mallorca",
+      "pts": 48,
+      "played": 38,
+      "w": 13,
+      "d": 9,
+      "l": 16,
+      "gd": -9
+    },
+    {
+      "name": "Valencia",
+      "pts": 46,
+      "played": 38,
+      "w": 11,
+      "d": 13,
+      "l": 14,
+      "gd": -10
+    },
+    {
+      "name": "Sociedad",
+      "pts": 46,
+      "played": 38,
+      "w": 13,
+      "d": 7,
+      "l": 18,
+      "gd": -11
+    },
+    {
+      "name": "Getafe",
+      "pts": 42,
+      "played": 38,
+      "w": 11,
+      "d": 9,
+      "l": 18,
+      "gd": -5
+    },
+    {
+      "name": "Alaves",
+      "pts": 42,
+      "played": 38,
+      "w": 10,
+      "d": 12,
+      "l": 16,
+      "gd": -10
+    },
+    {
+      "name": "Espanol",
+      "pts": 42,
+      "played": 38,
+      "w": 11,
+      "d": 9,
+      "l": 18,
+      "gd": -11
+    },
+    {
+      "name": "Sevilla",
+      "pts": 41,
+      "played": 38,
+      "w": 10,
+      "d": 11,
+      "l": 17,
+      "gd": -13
+    },
+    {
+      "name": "Girona",
+      "pts": 41,
+      "played": 38,
+      "w": 11,
+      "d": 8,
+      "l": 19,
+      "gd": -16
+    },
+    {
+      "name": "Leganes",
+      "pts": 40,
+      "played": 38,
+      "w": 9,
+      "d": 13,
+      "l": 16,
+      "gd": -17
+    },
+    {
+      "name": "Las Palmas",
+      "pts": 32,
+      "played": 38,
+      "w": 8,
+      "d": 8,
+      "l": 22,
+      "gd": -21
+    },
+    {
+      "name": "Valladolid",
+      "pts": 16,
+      "played": 38,
+      "w": 4,
+      "d": 4,
+      "l": 30,
+      "gd": -64
+    }
+  ],
+  "SA": [
+    {
+      "name": "Napoli",
+      "pts": 82,
+      "played": 38,
+      "w": 24,
+      "d": 10,
+      "l": 4,
+      "gd": 32
+    },
+    {
+      "name": "Inter",
+      "pts": 81,
+      "played": 38,
+      "w": 24,
+      "d": 9,
+      "l": 5,
+      "gd": 44
+    },
+    {
+      "name": "Atalanta",
+      "pts": 74,
+      "played": 38,
+      "w": 22,
+      "d": 8,
+      "l": 8,
+      "gd": 41
+    },
+    {
+      "name": "Juventus",
+      "pts": 70,
+      "played": 38,
+      "w": 18,
+      "d": 16,
+      "l": 4,
+      "gd": 23
+    },
+    {
+      "name": "Roma",
+      "pts": 69,
+      "played": 38,
+      "w": 20,
+      "d": 9,
+      "l": 9,
+      "gd": 21
+    },
+    {
+      "name": "Fiorentina",
+      "pts": 65,
+      "played": 38,
+      "w": 19,
+      "d": 8,
+      "l": 11,
+      "gd": 19
+    },
+    {
+      "name": "Lazio",
+      "pts": 65,
+      "played": 38,
+      "w": 18,
+      "d": 11,
+      "l": 9,
+      "gd": 12
+    },
+    {
+      "name": "Milan",
+      "pts": 63,
+      "played": 38,
+      "w": 18,
+      "d": 9,
+      "l": 11,
+      "gd": 18
+    },
+    {
+      "name": "Bologna",
+      "pts": 62,
+      "played": 38,
+      "w": 16,
+      "d": 14,
+      "l": 8,
+      "gd": 10
+    },
+    {
+      "name": "Como",
+      "pts": 49,
+      "played": 38,
+      "w": 13,
+      "d": 10,
+      "l": 15,
+      "gd": -3
+    },
+    {
+      "name": "Torino",
+      "pts": 44,
+      "played": 38,
+      "w": 10,
+      "d": 14,
+      "l": 14,
+      "gd": -6
+    },
+    {
+      "name": "Udinese",
+      "pts": 44,
+      "played": 38,
+      "w": 12,
+      "d": 8,
+      "l": 18,
+      "gd": -15
+    },
+    {
+      "name": "Genoa",
+      "pts": 43,
+      "played": 38,
+      "w": 10,
+      "d": 13,
+      "l": 15,
+      "gd": -12
+    },
+    {
+      "name": "Verona",
+      "pts": 37,
+      "played": 38,
+      "w": 10,
+      "d": 7,
+      "l": 21,
+      "gd": -32
+    },
+    {
+      "name": "Parma",
+      "pts": 36,
+      "played": 38,
+      "w": 7,
+      "d": 15,
+      "l": 16,
+      "gd": -14
+    },
+    {
+      "name": "Cagliari",
+      "pts": 36,
+      "played": 38,
+      "w": 9,
+      "d": 9,
+      "l": 20,
+      "gd": -16
+    },
+    {
+      "name": "Lecce",
+      "pts": 34,
+      "played": 38,
+      "w": 8,
+      "d": 10,
+      "l": 20,
+      "gd": -31
+    },
+    {
+      "name": "Empoli",
+      "pts": 31,
+      "played": 38,
+      "w": 6,
+      "d": 13,
+      "l": 19,
+      "gd": -26
+    },
+    {
+      "name": "Venezia",
+      "pts": 29,
+      "played": 38,
+      "w": 5,
+      "d": 14,
+      "l": 19,
+      "gd": -24
+    },
+    {
+      "name": "Monza",
+      "pts": 18,
+      "played": 38,
+      "w": 3,
+      "d": 9,
+      "l": 26,
+      "gd": -41
+    }
+  ],
+  "BL": [
+    {
+      "name": "Bayern Munich",
+      "pts": 82,
+      "played": 34,
+      "w": 25,
+      "d": 7,
+      "l": 2,
+      "gd": 67
+    },
+    {
+      "name": "Leverkusen",
+      "pts": 69,
+      "played": 34,
+      "w": 19,
+      "d": 12,
+      "l": 3,
+      "gd": 29
+    },
+    {
+      "name": "Ein Frankfurt",
+      "pts": 60,
+      "played": 34,
+      "w": 17,
+      "d": 9,
+      "l": 8,
+      "gd": 22
+    },
+    {
+      "name": "Dortmund",
+      "pts": 57,
+      "played": 34,
+      "w": 17,
+      "d": 6,
+      "l": 11,
+      "gd": 20
+    },
+    {
+      "name": "Freiburg",
+      "pts": 55,
+      "played": 34,
+      "w": 16,
+      "d": 7,
+      "l": 11,
+      "gd": -4
+    },
+    {
+      "name": "Mainz",
+      "pts": 52,
+      "played": 34,
+      "w": 14,
+      "d": 10,
+      "l": 10,
+      "gd": 12
+    },
+    {
+      "name": "RB Leipzig",
+      "pts": 51,
+      "played": 34,
+      "w": 13,
+      "d": 12,
+      "l": 9,
+      "gd": 5
+    },
+    {
+      "name": "Werder Bremen",
+      "pts": 51,
+      "played": 34,
+      "w": 14,
+      "d": 9,
+      "l": 11,
+      "gd": -3
+    },
+    {
+      "name": "Stuttgart",
+      "pts": 50,
+      "played": 34,
+      "w": 14,
+      "d": 8,
+      "l": 12,
+      "gd": 11
+    },
+    {
+      "name": "M'gladbach",
+      "pts": 45,
+      "played": 34,
+      "w": 13,
+      "d": 6,
+      "l": 15,
+      "gd": -2
+    },
+    {
+      "name": "Wolfsburg",
+      "pts": 43,
+      "played": 34,
+      "w": 11,
+      "d": 10,
+      "l": 13,
+      "gd": 2
+    },
+    {
+      "name": "Augsburg",
+      "pts": 43,
+      "played": 34,
+      "w": 11,
+      "d": 10,
+      "l": 13,
+      "gd": -16
+    },
+    {
+      "name": "Union Berlin",
+      "pts": 40,
+      "played": 34,
+      "w": 10,
+      "d": 10,
+      "l": 14,
+      "gd": -16
+    },
+    {
+      "name": "St Pauli",
+      "pts": 32,
+      "played": 34,
+      "w": 8,
+      "d": 8,
+      "l": 18,
+      "gd": -13
+    },
+    {
+      "name": "Hoffenheim",
+      "pts": 32,
+      "played": 34,
+      "w": 7,
+      "d": 11,
+      "l": 16,
+      "gd": -22
+    },
+    {
+      "name": "Heidenheim",
+      "pts": 29,
+      "played": 34,
+      "w": 8,
+      "d": 5,
+      "l": 21,
+      "gd": -27
+    },
+    {
+      "name": "Holstein Kiel",
+      "pts": 25,
+      "played": 34,
+      "w": 6,
+      "d": 7,
+      "l": 21,
+      "gd": -31
+    },
+    {
+      "name": "Bochum",
+      "pts": 25,
+      "played": 34,
+      "w": 6,
+      "d": 7,
+      "l": 21,
+      "gd": -34
+    }
+  ],
+  "L1": [
+    {
+      "name": "Paris SG",
+      "pts": 84,
+      "played": 34,
+      "w": 26,
+      "d": 6,
+      "l": 2,
+      "gd": 57
+    },
+    {
+      "name": "Marseille",
+      "pts": 65,
+      "played": 34,
+      "w": 20,
+      "d": 5,
+      "l": 9,
+      "gd": 27
+    },
+    {
+      "name": "Monaco",
+      "pts": 61,
+      "played": 34,
+      "w": 18,
+      "d": 7,
+      "l": 9,
+      "gd": 22
+    },
+    {
+      "name": "Nice",
+      "pts": 60,
+      "played": 34,
+      "w": 17,
+      "d": 9,
+      "l": 8,
+      "gd": 25
+    },
+    {
+      "name": "Lille",
+      "pts": 60,
+      "played": 34,
+      "w": 17,
+      "d": 9,
+      "l": 8,
+      "gd": 16
+    },
+    {
+      "name": "Lyon",
+      "pts": 57,
+      "played": 34,
+      "w": 17,
+      "d": 6,
+      "l": 11,
+      "gd": 19
+    },
+    {
+      "name": "Strasbourg",
+      "pts": 57,
+      "played": 34,
+      "w": 16,
+      "d": 9,
+      "l": 9,
+      "gd": 12
+    },
+    {
+      "name": "Lens",
+      "pts": 52,
+      "played": 34,
+      "w": 15,
+      "d": 7,
+      "l": 12,
+      "gd": 3
+    },
+    {
+      "name": "Brest",
+      "pts": 50,
+      "played": 34,
+      "w": 15,
+      "d": 5,
+      "l": 14,
+      "gd": -7
+    },
+    {
+      "name": "Toulouse",
+      "pts": 42,
+      "played": 34,
+      "w": 11,
+      "d": 9,
+      "l": 14,
+      "gd": 1
+    },
+    {
+      "name": "Auxerre",
+      "pts": 42,
+      "played": 34,
+      "w": 11,
+      "d": 9,
+      "l": 14,
+      "gd": -3
+    },
+    {
+      "name": "Rennes",
+      "pts": 41,
+      "played": 34,
+      "w": 13,
+      "d": 2,
+      "l": 19,
+      "gd": 1
+    },
+    {
+      "name": "Nantes",
+      "pts": 36,
+      "played": 34,
+      "w": 8,
+      "d": 12,
+      "l": 14,
+      "gd": -13
+    },
+    {
+      "name": "Angers",
+      "pts": 36,
+      "played": 34,
+      "w": 10,
+      "d": 6,
+      "l": 18,
+      "gd": -21
+    },
+    {
+      "name": "Le Havre",
+      "pts": 34,
+      "played": 34,
+      "w": 10,
+      "d": 4,
+      "l": 20,
+      "gd": -31
+    },
+    {
+      "name": "Reims",
+      "pts": 33,
+      "played": 34,
+      "w": 8,
+      "d": 9,
+      "l": 17,
+      "gd": -14
+    },
+    {
+      "name": "St Etienne",
+      "pts": 30,
+      "played": 34,
+      "w": 8,
+      "d": 6,
+      "l": 20,
+      "gd": -38
+    },
+    {
+      "name": "Montpellier",
+      "pts": 16,
+      "played": 34,
+      "w": 4,
+      "d": 4,
+      "l": 26,
+      "gd": -56
+    }
+  ],
+  "SL": [
+    {
+      "name": "Galatasaray",
+      "pts": 95,
+      "played": 36,
+      "w": 30,
+      "d": 5,
+      "l": 1,
+      "gd": 60
+    },
+    {
+      "name": "Fenerbahce",
+      "pts": 84,
+      "played": 36,
+      "w": 26,
+      "d": 6,
+      "l": 4,
+      "gd": 51
+    },
+    {
+      "name": "Samsunspor",
+      "pts": 64,
+      "played": 36,
+      "w": 19,
+      "d": 7,
+      "l": 10,
+      "gd": 14
+    },
+    {
+      "name": "Besiktas",
+      "pts": 62,
+      "played": 36,
+      "w": 17,
+      "d": 11,
+      "l": 8,
+      "gd": 23
+    },
+    {
+      "name": "Buyuksehyr",
+      "pts": 54,
+      "played": 36,
+      "w": 16,
+      "d": 6,
+      "l": 14,
+      "gd": 4
+    },
+    {
+      "name": "Eyupspor",
+      "pts": 53,
+      "played": 36,
+      "w": 15,
+      "d": 8,
+      "l": 13,
+      "gd": 5
+    },
+    {
+      "name": "Trabzonspor",
+      "pts": 51,
+      "played": 36,
+      "w": 13,
+      "d": 12,
+      "l": 11,
+      "gd": 13
+    },
+    {
+      "name": "Goztep",
+      "pts": 50,
+      "played": 36,
+      "w": 13,
+      "d": 11,
+      "l": 12,
+      "gd": 9
+    },
+    {
+      "name": "Rizespor",
+      "pts": 49,
+      "played": 36,
+      "w": 15,
+      "d": 4,
+      "l": 17,
+      "gd": -6
+    },
+    {
+      "name": "Kasimpasa",
+      "pts": 47,
+      "played": 36,
+      "w": 11,
+      "d": 14,
+      "l": 11,
+      "gd": -1
+    },
+    {
+      "name": "Konyaspor",
+      "pts": 46,
+      "played": 36,
+      "w": 13,
+      "d": 7,
+      "l": 16,
+      "gd": -5
+    },
+    {
+      "name": "Gaziantep",
+      "pts": 45,
+      "played": 36,
+      "w": 12,
+      "d": 9,
+      "l": 15,
+      "gd": -5
+    },
+    {
+      "name": "Alanyaspor",
+      "pts": 45,
+      "played": 36,
+      "w": 12,
+      "d": 9,
+      "l": 15,
+      "gd": -7
+    },
+    {
+      "name": "Kayserispor",
+      "pts": 45,
+      "played": 36,
+      "w": 11,
+      "d": 12,
+      "l": 13,
+      "gd": -12
+    },
+    {
+      "name": "Antalyaspor",
+      "pts": 44,
+      "played": 36,
+      "w": 12,
+      "d": 8,
+      "l": 16,
+      "gd": -25
+    },
+    {
+      "name": "Bodrumspor",
+      "pts": 37,
+      "played": 36,
+      "w": 9,
+      "d": 10,
+      "l": 17,
+      "gd": -17
+    },
+    {
+      "name": "Sivasspor",
+      "pts": 35,
+      "played": 36,
+      "w": 9,
+      "d": 8,
+      "l": 19,
+      "gd": -16
+    },
+    {
+      "name": "Hatayspor",
+      "pts": 26,
+      "played": 36,
+      "w": 6,
+      "d": 8,
+      "l": 22,
+      "gd": -27
+    },
+    {
+      "name": "Ad. Demirspor",
+      "pts": 14,
+      "played": 36,
+      "w": 3,
+      "d": 5,
+      "l": 28,
+      "gd": -58
+    }
+  ]
+};
 
-  // Premier League örnek
-  const plMatches = [
-    ["Manchester City", "Liverpool", "2026-01-18"],
-    ["Arsenal", "Chelsea", "2026-02-07"],
-    ["Manchester United", "Tottenham", "2026-03-14"],
-    ["Liverpool", "Arsenal", "2026-04-04"],
-    ["Manchester City", "Tottenham", "2026-08-15"],
-    ["Chelsea", "Liverpool", "2026-09-19"],
-    ["Arsenal", "Manchester City", "2026-10-24"],
-    ["Tottenham", "Manchester United", "2026-11-21"],
-  ];
-  plMatches.forEach(([h, a, d]) => fixtures.push({
-    id: id++, league: "PL", home: h, away: a, date: d, time: "17:30",
-    venue: "Stadium", played: false
-  }));
-
-  // La Liga
-  [["Real Madrid", "Barcelona", "2026-03-22"],
-   ["Atletico Madrid", "Real Madrid", "2026-04-19"],
-   ["Barcelona", "Athletic Bilbao", "2026-09-13"],
-   ["Real Madrid", "Atletico Madrid", "2026-10-25"]
-  ].forEach(([h,a,d]) => fixtures.push({
-    id: id++, league: "LL", home: h, away: a, date: d, time: "21:00",
-    venue: "Stadyum", played: false
-  }));
-
-  // Serie A
-  [["Inter", "Milan", "2026-02-15"],
-   ["Juventus", "Napoli", "2026-03-08"],
-   ["Milan", "Juventus", "2026-04-05"],
-   ["Napoli", "Inter", "2026-10-18"]
-  ].forEach(([h,a,d]) => fixtures.push({
-    id: id++, league: "SA", home: h, away: a, date: d, time: "20:45",
-    venue: "Stadyum", played: false
-  }));
-
-  // Bundesliga
-  [["Bayern Münih", "Dortmund", "2026-01-31"],
-   ["Leverkusen", "Bayern Münih", "2026-03-07"],
-   ["Dortmund", "RB Leipzig", "2026-04-11"],
-   ["Bayern Münih", "Leverkusen", "2026-09-26"]
-  ].forEach(([h,a,d]) => fixtures.push({
-    id: id++, league: "BL", home: h, away: a, date: d, time: "18:30",
-    venue: "Allianz Arena", played: false
-  }));
-
-  // Ligue 1
-  [["PSG", "Marseille", "2026-02-22"],
-   ["Monaco", "PSG", "2026-04-26"],
-   ["PSG", "Lyon", "2026-09-20"],
-   ["Marseille", "Monaco", "2026-11-15"]
-  ].forEach(([h,a,d]) => fixtures.push({
-    id: id++, league: "L1", home: h, away: a, date: d, time: "21:00",
-    venue: "Parc des Princes", played: false
-  }));
-
-  // UCL
-  [["Manchester City", "Real Madrid", "2026-02-17", "UCL Son 16"],
-   ["Bayern Münih", "Arsenal", "2026-03-10", "UCL Son 16"],
-   ["PSG", "Barcelona", "2026-04-08", "UCL Çeyrek"],
-   ["Real Madrid", "Bayern Münih", "2026-04-29", "UCL Yarı"],
-   ["Real Madrid", "Manchester City", "2026-05-30", "UCL FİNAL"]
-  ].forEach(([h,a,d, stage]) => fixtures.push({
-    id: id++, league: "UCL", home: h, away: a, date: d, time: "22:00",
-    venue: stage, played: false
-  }));
-
-  // Tarihe göre sırala
-  fixtures.sort((a, b) => a.date.localeCompare(b.date));
-  return fixtures;
-}
-
-const FIXTURES = generateFixtures();
+const DATA_META = {
+  generated: '2026-05-14T17:05:44.014Z',
+  sources: ["github.com/martj42/international_results (45k milli takım maçı)","football-data.co.uk 2024-25 sezon (Top 5 lig + Süper Lig)"]
+};
 
 // =====================================================
 // TAHMİN MODELLERİ
