@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="tr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futbol 2026 - Maç Analiz ve Tahmin</title>
+<style>
+:root {
+  --bg: #0b1220;
+  --panel: #131c30;
+  --panel-2: #1a2540;
+  --accent: #22c55e;
+  --accent-2: #3b82f6;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --text: #e6edf7;
+  --muted: #8b96ab;
+  --border: #243049;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(180deg, #0a0f1e, #0b1220);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(11,18,32,0.85);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { font-size: 38px; }
+h1 { margin: 0; font-size: 20px; letter-spacing: 0.3px; }
+.tag { margin: 0; color: var(--muted); font-size: 12px; }
+
+.tabs { display: flex; gap: 4px; }
+.tab {
+  background: transparent; color: var(--muted);
+  border: 1px solid transparent;
+  padding: 8px 16px; border-radius: 8px;
+  cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: all 0.15s;
+}
+.tab:hover { color: var(--text); background: var(--panel); }
+.tab.active { color: var(--text); background: var(--panel-2); border-color: var(--border); }
+
+main { padding: 24px 32px; max-width: 1280px; margin: 0 auto; }
+.view { display: none; }
+.view.active { display: block; }
+h2 { margin-top: 0; font-size: 22px; }
+.muted { color: var(--muted); }
+
+/* FILTERS */
+.filters {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.filters select, .filters input, select, input[type="text"] {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+.filters input { flex: 1; min-width: 200px; }
+select:focus, input:focus { border-color: var(--accent-2); }
+
+/* FIXTURE GRID */
+.fixture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.fixture {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.fixture:hover {
+  border-color: var(--accent-2);
+  transform: translateY(-2px);
+}
+.fixture-head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--muted); margin-bottom: 10px;
+}
+.league-badge {
+  background: var(--panel-2); padding: 3px 8px; border-radius: 6px;
+  font-weight: 500;
+}
+.fixture-teams {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.fixture-team { font-weight: 600; font-size: 15px; flex: 1; }
+.fixture-team.away { text-align: right; }
+.fixture-vs { color: var(--muted); padding: 0 12px; }
+.fixture-foot {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--muted);
+}
+.predict-pill {
+  background: var(--accent); color: #04220e;
+  padding: 3px 8px; border-radius: 6px; font-weight: 600;
+}
+
+/* PREDICT */
+.predict-header { margin-bottom: 20px; }
+.predict-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 24px;
+}
+.card { display: flex; flex-direction: column; gap: 6px; }
+.card label { font-size: 12px; color: var(--muted); }
+.card select { width: 100%; }
+.btn-primary {
+  background: var(--accent); color: #04220e;
+  border: none; padding: 11px 22px;
+  border-radius: 8px; font-weight: 700;
+  cursor: pointer; font-size: 14px;
+  transition: all 0.15s;
+}
+.btn-primary:hover { background: #16a34a; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.prediction-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.hidden { display: none; }
+
+.result-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.team-side { text-align: center; }
+.team-side.away { text-align: center; }
+.tname { font-size: 16px; color: var(--muted); margin-bottom: 6px; }
+.score { font-size: 56px; font-weight: 800; }
+.vs-block { text-align: center; }
+.vs { font-size: 14px; color: var(--muted); letter-spacing: 4px; }
+.confidence { margin-top: 8px; font-size: 12px; }
+
+.prob-bar {
+  display: flex; height: 38px; border-radius: 10px;
+  overflow: hidden; margin-bottom: 24px;
+  border: 1px solid var(--border);
+}
+.prob {
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+  transition: all 0.3s;
+}
+.prob.home { background: linear-gradient(90deg, #1e40af, #3b82f6); }
+.prob.draw { background: linear-gradient(90deg, #64748b, #94a3b8); color: #0b1220; }
+.prob.away { background: linear-gradient(90deg, #b91c1c, #ef4444); }
+
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.model-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.model-card h4 { margin: 0 0 4px; font-size: 14px; }
+.model-desc { margin: 0 0 10px; font-size: 11px; color: var(--muted); }
+.model-result { font-size: 13px; line-height: 1.7; }
+.model-result .pred-score {
+  font-size: 22px; font-weight: 700; margin-bottom: 6px;
+}
+
+.analysis-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.analysis-card h3 { margin: 0 0 10px; font-size: 15px; }
+#analysisText { font-size: 14px; line-height: 1.7; color: #cbd5e1; }
+#analysisText ul { padding-left: 20px; margin: 8px 0; }
+
+.score-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+.score-item {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+.score-item .s { font-size: 18px; font-weight: 700; }
+.score-item .p { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* TEAM TABLE */
+.team-table {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.tt-row {
+  display: grid;
+  grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  font-size: 14px;
+}
+.tt-row.head { background: var(--panel-2); font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; }
+.tt-row:last-child { border-bottom: none; }
+.tt-row:not(.head):hover { background: var(--panel-2); }
+.rank { color: var(--muted); font-weight: 600; }
+.rank.top { color: var(--accent); }
+
+/* ABOUT */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.about-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+.about-card h3 { margin: 0 0 8px; }
+.about-card code {
+  display: block;
+  background: var(--panel-2);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--accent);
+}
+.footnote {
+  color: var(--warn);
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.3);
+  padding: 12px; border-radius: 8px;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .topbar { flex-direction: column; gap: 12px; padding: 12px; }
+  main { padding: 16px; }
+  .predict-grid { grid-template-columns: 1fr; }
+  .result-top { gap: 8px; }
+  .score { font-size: 36px; }
+  .tt-row { grid-template-columns: 30px 1.5fr 0.8fr 0.8fr 0.8fr; font-size: 12px; }
+  .tt-row .hide-mobile { display: none; }
+}
+</style>
+</head><body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">⚽</span>
+    <div>
+      <h1>Futbol 2026</h1>
+      <p class="tag">Maç Analizi & Tahmin Paneli</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-tab="fixtures">Fikstür</button>
+    <button class="tab" data-tab="predict">Tahmin Stüdyosu</button>
+    <button class="tab" data-tab="teams">Takım Analizi</button>
+    <button class="tab" data-tab="about">Modeller</button>
+  </nav>
+</header>
+
+<main>
+  <!-- FIXTURES VIEW -->
+  <section id="view-fixtures" class="view active">
+    <div class="filters">
+      <select id="leagueFilter">
+        <option value="all">Tüm Turnuvalar</option>
+        <option value="WC2026">2026 Dünya Kupası</option>
+        <option value="SL">Süper Lig</option>
+        <option value="PL">Premier League</option>
+        <option value="LL">La Liga</option>
+        <option value="SA">Serie A</option>
+        <option value="BL">Bundesliga</option>
+        <option value="L1">Ligue 1</option>
+        <option value="UCL">Şampiyonlar Ligi</option>
+      </select>
+      <input type="text" id="searchTeam" placeholder="Takım ara... (örn. Türkiye)">
+      <select id="monthFilter">
+        <option value="all">Tüm Aylar</option>
+        <option value="2026-01">Ocak 2026</option>
+        <option value="2026-02">Şubat 2026</option>
+        <option value="2026-03">Mart 2026</option>
+        <option value="2026-04">Nisan 2026</option>
+        <option value="2026-05">Mayıs 2026</option>
+        <option value="2026-06">Haziran 2026</option>
+        <option value="2026-07">Temmuz 2026</option>
+        <option value="2026-08">Ağustos 2026</option>
+        <option value="2026-09">Eylül 2026</option>
+        <option value="2026-10">Ekim 2026</option>
+        <option value="2026-11">Kasım 2026</option>
+        <option value="2026-12">Aralık 2026</option>
+      </select>
+    </div>
+    <div id="fixtureList" class="fixture-grid"></div>
+  </section>
+
+  <!-- PREDICT VIEW -->
+  <section id="view-predict" class="view">
+    <div class="predict-header">
+      <h2>Tahmin Stüdyosu</h2>
+      <p class="muted">İki takım seçin; üç farklı model birleşik tahmin üretsin.</p>
+    </div>
+    <div class="predict-grid">
+      <div class="card">
+        <label>Ev Sahibi</label>
+        <select id="homeTeam"></select>
+      </div>
+      <div class="card">
+        <label>Deplasman</label>
+        <select id="awayTeam"></select>
+      </div>
+      <div class="card">
+        <label>Maç Türü</label>
+        <select id="matchContext">
+          <option value="league">Lig Maçı</option>
+          <option value="cup">Kupa / Eleme</option>
+          <option value="friendly">Hazırlık</option>
+        </select>
+      </div>
+      <button id="runPredict" class="btn-primary">Tahmin Üret</button>
+    </div>
+
+    <div id="predictionResult" class="prediction-panel hidden">
+      <div class="result-top">
+        <div class="team-side home">
+          <div id="resHome" class="tname"></div>
+          <div id="resHomeScore" class="score">-</div>
+        </div>
+        <div class="vs-block">
+          <div class="vs">VS</div>
+          <div id="resConfidence" class="confidence"></div>
+        </div>
+        <div class="team-side away">
+          <div id="resAway" class="tname"></div>
+          <div id="resAwayScore" class="score">-</div>
+        </div>
+      </div>
+
+      <div class="prob-bar">
+        <div id="probHome" class="prob home" title="Ev galibiyeti">1</div>
+        <div id="probDraw" class="prob draw" title="Beraberlik">X</div>
+        <div id="probAway" class="prob away" title="Deplasman galibiyeti">2</div>
+      </div>
+
+      <div class="models-grid">
+        <div class="model-card">
+          <h4>📊 İstatistik Modeli</h4>
+          <p class="model-desc">Form, gol ortalaması, ev avantajı</p>
+          <div id="statModel" class="model-result"></div>
+        </div>
+        <div class="model-card">
+          <h4>🏆 Elo Rating Modeli</h4>
+          <p class="model-desc">Takım güç puanı bazlı 1X2 olasılık</p>
+          <div id="eloModel" class="model-result"></div>
+        </div>
+        <div class="model-card">
+          <h4>🎯 Poisson Modeli</h4>
+          <p class="model-desc">xG bazlı olasılıksal skor dağılımı</p>
+          <div id="poissonModel" class="model-result"></div>
+        </div>
+      </div>
+
+      <div class="analysis-card">
+        <h3>📝 Maç Analizi</h3>
+        <div id="analysisText"></div>
+      </div>
+
+      <div class="analysis-card">
+        <h3>🎲 Olası Skorlar (Top 5)</h3>
+        <div id="topScores" class="score-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAMS VIEW -->
+  <section id="view-teams" class="view">
+    <h2>Takım Sıralaması (Elo)</h2>
+    <p class="muted">Tüm takımların güç puanları ve istatistikleri.</p>
+    <div id="teamTable" class="team-table"></div>
+  </section>
+
+  <!-- ABOUT VIEW -->
+  <section id="view-about" class="view">
+    <h2>Modeller Hakkında</h2>
+    <div class="about-grid">
+      <div class="about-card">
+        <h3>📊 İstatistik Modeli</h3>
+        <p>Son 5 maçtaki form puanı, gol ortalaması ve ev sahibi avantajını birleştirir.
+        Basit ama açıklanabilir: hangi takımın hangi metrikte önde olduğunu gösterir.</p>
+        <code>skor = (form × 0.4) + (gol_ort × 0.4) + (ev_avantajı × 0.2)</code>
+      </div>
+      <div class="about-card">
+        <h3>🏆 Elo Rating Modeli</h3>
+        <p>Satrançtan uyarlanmış güç puanı sistemi. Her takımın gücü tek bir sayıyla ifade edilir.
+        Maç sonuçlarına göre puanlar güncellenir.</p>
+        <code>P(A) = 1 / (1 + 10^((R_B - R_A) / 400))</code>
+      </div>
+      <div class="about-card">
+        <h3>🎯 Poisson Modeli</h3>
+        <p>Her takımın gol beklentisi (λ - lambda) Poisson dağılımıyla modellenir.
+        Her olası skorun olasılığı hesaplanır.</p>
+        <code>P(k gol) = (λ^k × e^-λ) / k!</code>
+      </div>
+      <div class="about-card">
+        <h3>🔀 Birleşik Tahmin</h3>
+        <p>Üç model ortalaması alınarak nihai 1X2 olasılığı ve en olası skor üretilir.
+        Modeller birbirleriyle çelişiyorsa "düşük güven" uyarısı verilir.</p>
+      </div>
+    </div>
+    <p class="footnote">⚠️ Bu uygulama eğitim/demo amaçlıdır. Mock veriler kullanır; bahis için kullanmayın.</p>
+  </section>
+</main>
+
+<script>
+// =====================================================
+// Futbol 2026 - Mock Veri Seti
+// Gerçek API'ye bağlanmak isterseniz fetchFixtures()'ı düzenleyin.
+// =====================================================
+
+const TEAMS = {
+  // 2026 Dünya Kupası - Favori adaylar (gerçek Elo'lara yakın)
+  "Arjantin":      { elo: 2105, league: "WC2026", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 0.8 },
+  "Fransa":        { elo: 2080, league: "WC2026", form: [3,3,3,1,3], goalsFor: 2.0, goalsAg: 0.9 },
+  "Brezilya":      { elo: 2070, league: "WC2026", form: [3,1,3,3,1], goalsFor: 1.9, goalsAg: 0.7 },
+  "İngiltere":     { elo: 2045, league: "WC2026", form: [3,3,1,3,1], goalsFor: 1.8, goalsAg: 0.9 },
+  "İspanya":       { elo: 2055, league: "WC2026", form: [3,3,3,3,1], goalsFor: 1.9, goalsAg: 0.8 },
+  "Almanya":       { elo: 2020, league: "WC2026", form: [1,3,3,1,3], goalsFor: 1.7, goalsAg: 1.0 },
+  "Hollanda":      { elo: 2010, league: "WC2026", form: [3,1,3,3,1], goalsFor: 1.7, goalsAg: 1.0 },
+  "Portekiz":      { elo: 2035, league: "WC2026", form: [3,3,1,3,3], goalsFor: 1.9, goalsAg: 0.9 },
+  "İtalya":        { elo: 1995, league: "WC2026", form: [1,3,1,3,3], goalsFor: 1.5, goalsAg: 0.9 },
+  "Belçika":       { elo: 1985, league: "WC2026", form: [3,1,1,3,3], goalsFor: 1.6, goalsAg: 1.0 },
+  "Hırvatistan":   { elo: 1970, league: "WC2026", form: [1,3,1,3,1], goalsFor: 1.4, goalsAg: 1.0 },
+  "Uruguay":       { elo: 1960, league: "WC2026", form: [3,1,3,1,3], goalsFor: 1.6, goalsAg: 1.1 },
+  "Türkiye":       { elo: 1820, league: "WC2026", form: [1,3,3,1,3], goalsFor: 1.5, goalsAg: 1.2 },
+  "ABD":           { elo: 1830, league: "WC2026", form: [3,1,1,3,1], goalsFor: 1.4, goalsAg: 1.2 },
+  "Meksika":       { elo: 1840, league: "WC2026", form: [1,3,1,3,1], goalsFor: 1.5, goalsAg: 1.3 },
+  "Kanada":        { elo: 1780, league: "WC2026", form: [1,1,3,1,3], goalsFor: 1.3, goalsAg: 1.3 },
+  "Japonya":       { elo: 1890, league: "WC2026", form: [3,3,1,3,1], goalsFor: 1.6, goalsAg: 1.0 },
+  "Senegal":       { elo: 1850, league: "WC2026", form: [1,3,3,1,1], goalsFor: 1.5, goalsAg: 1.1 },
+  "Fas":           { elo: 1880, league: "WC2026", form: [3,1,3,1,3], goalsFor: 1.5, goalsAg: 0.9 },
+
+  // Süper Lig
+  "Galatasaray":   { elo: 1815, league: "SL", form: [3,3,3,1,3], goalsFor: 2.2, goalsAg: 0.9 },
+  "Fenerbahçe":    { elo: 1810, league: "SL", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 1.0 },
+  "Beşiktaş":      { elo: 1720, league: "SL", form: [1,3,3,1,3], goalsFor: 1.8, goalsAg: 1.2 },
+  "Trabzonspor":   { elo: 1690, league: "SL", form: [3,1,1,3,1], goalsFor: 1.6, goalsAg: 1.3 },
+  "Başakşehir":    { elo: 1640, league: "SL", form: [1,3,1,1,3], goalsFor: 1.4, goalsAg: 1.3 },
+  "Samsunspor":    { elo: 1580, league: "SL", form: [1,1,3,1,3], goalsFor: 1.3, goalsAg: 1.4 },
+
+  // Premier League
+  "Manchester City":  { elo: 2050, league: "PL", form: [3,3,3,3,1], goalsFor: 2.5, goalsAg: 0.9 },
+  "Arsenal":          { elo: 2010, league: "PL", form: [3,3,1,3,3], goalsFor: 2.2, goalsAg: 1.0 },
+  "Liverpool":        { elo: 2020, league: "PL", form: [3,1,3,3,3], goalsFor: 2.3, goalsAg: 1.1 },
+  "Chelsea":          { elo: 1900, league: "PL", form: [1,3,3,1,1], goalsFor: 1.7, goalsAg: 1.2 },
+  "Tottenham":        { elo: 1920, league: "PL", form: [3,1,1,3,3], goalsFor: 1.9, goalsAg: 1.3 },
+  "Manchester United":{ elo: 1880, league: "PL", form: [1,3,1,1,3], goalsFor: 1.6, goalsAg: 1.3 },
+
+  // La Liga
+  "Real Madrid":   { elo: 2080, league: "LL", form: [3,3,3,1,3], goalsFor: 2.4, goalsAg: 0.8 },
+  "Barcelona":     { elo: 2030, league: "LL", form: [3,1,3,3,3], goalsFor: 2.3, goalsAg: 1.0 },
+  "Atletico Madrid":{ elo: 1950, league: "LL", form: [3,3,1,3,1], goalsFor: 1.9, goalsAg: 1.0 },
+  "Athletic Bilbao":{ elo: 1820, league: "LL", form: [3,1,3,1,3], goalsFor: 1.6, goalsAg: 1.1 },
+
+  // Serie A
+  "Inter":         { elo: 2000, league: "SA", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 0.9 },
+  "Milan":         { elo: 1940, league: "SA", form: [3,1,3,1,3], goalsFor: 1.9, goalsAg: 1.1 },
+  "Juventus":      { elo: 1920, league: "SA", form: [1,3,3,1,3], goalsFor: 1.8, goalsAg: 1.0 },
+  "Napoli":        { elo: 1955, league: "SA", form: [3,3,1,3,1], goalsFor: 1.9, goalsAg: 1.1 },
+
+  // Bundesliga
+  "Bayern Münih":  { elo: 2040, league: "BL", form: [3,3,3,1,3], goalsFor: 2.6, goalsAg: 1.0 },
+  "Leverkusen":    { elo: 1970, league: "BL", form: [3,3,1,3,3], goalsFor: 2.1, goalsAg: 1.0 },
+  "Dortmund":      { elo: 1910, league: "BL", form: [3,1,3,1,3], goalsFor: 2.0, goalsAg: 1.2 },
+  "RB Leipzig":    { elo: 1890, league: "BL", form: [1,3,1,3,3], goalsFor: 1.8, goalsAg: 1.1 },
+
+  // Ligue 1
+  "PSG":           { elo: 2010, league: "L1", form: [3,3,3,3,1], goalsFor: 2.4, goalsAg: 0.9 },
+  "Marseille":     { elo: 1830, league: "L1", form: [3,1,3,1,3], goalsFor: 1.8, goalsAg: 1.2 },
+  "Monaco":        { elo: 1820, league: "L1", form: [1,3,3,1,3], goalsFor: 1.7, goalsAg: 1.2 },
+  "Lyon":          { elo: 1780, league: "L1", form: [1,1,3,3,1], goalsFor: 1.5, goalsAg: 1.3 },
+};
+
+const LEAGUE_NAMES = {
+  "WC2026": "2026 Dünya Kupası",
+  "SL": "Süper Lig",
+  "PL": "Premier League",
+  "LL": "La Liga",
+  "SA": "Serie A",
+  "BL": "Bundesliga",
+  "L1": "Ligue 1",
+  "UCL": "Şampiyonlar Ligi"
+};
+
+// 2026 Fikstür örnek üretimi
+function generateFixtures() {
+  const fixtures = [];
+  let id = 1;
+
+  // 2026 Dünya Kupası grup ve eleme maçları (Haziran-Temmuz 2026)
+  const wcGroupMatches = [
+    ["Arjantin", "Türkiye", "2026-06-13", "Estadio Azteca, Mexico"],
+    ["Brezilya", "Senegal", "2026-06-14", "MetLife, New Jersey"],
+    ["Fransa", "Meksika", "2026-06-15", "SoFi Stadium, LA"],
+    ["İngiltere", "ABD", "2026-06-16", "AT&T Stadium, Dallas"],
+    ["İspanya", "Japonya", "2026-06-17", "BC Place, Vancouver"],
+    ["Almanya", "Fas", "2026-06-18", "Lumen Field, Seattle"],
+    ["Hollanda", "Kanada", "2026-06-19", "BMO Field, Toronto"],
+    ["Portekiz", "Uruguay", "2026-06-20", "Gillette Stadium, Boston"],
+    ["İtalya", "Hırvatistan", "2026-06-21", "Mercedes-Benz, Atlanta"],
+    ["Türkiye", "Brezilya", "2026-06-22", "Estadio Akron, Guadalajara"],
+    ["Belçika", "Japonya", "2026-06-23", "NRG Stadium, Houston"],
+    ["Arjantin", "Fas", "2026-06-24", "Hard Rock Stadium, Miami"],
+    // Son 16
+    ["Fransa", "Belçika", "2026-06-30", "MetLife, New Jersey"],
+    ["İspanya", "Almanya", "2026-07-01", "AT&T Stadium, Dallas"],
+    ["Brezilya", "Portekiz", "2026-07-02", "SoFi Stadium, LA"],
+    ["Arjantin", "İngiltere", "2026-07-03", "Estadio Azteca, Mexico"],
+    // Çeyrek
+    ["Fransa", "İspanya", "2026-07-09", "MetLife, New Jersey"],
+    ["Brezilya", "Arjantin", "2026-07-10", "AT&T Stadium, Dallas"],
+    // Yarı
+    ["Fransa", "Brezilya", "2026-07-14", "MetLife, New Jersey"],
+    // Final
+    ["Fransa", "Arjantin", "2026-07-19", "MetLife, New Jersey - FİNAL"],
+  ];
+
+  wcGroupMatches.forEach(([home, away, date, venue]) => {
+    fixtures.push({
+      id: id++, league: "WC2026", home, away,
+      date, time: "21:00", venue,
+      played: false
+    });
+  });
+
+  // Süper Lig - aylık örnek maçlar
+  const slTeams = ["Galatasaray", "Fenerbahçe", "Beşiktaş", "Trabzonspor", "Başakşehir", "Samsunspor"];
+  const months2026 = ["2026-01-15", "2026-02-08", "2026-02-22", "2026-03-15", "2026-04-12",
+                      "2026-05-10", "2026-08-22", "2026-09-12", "2026-10-04", "2026-11-08",
+                      "2026-12-06", "2026-12-20"];
+
+  months2026.forEach((d, idx) => {
+    const h = slTeams[idx % slTeams.length];
+    const a = slTeams[(idx + 2) % slTeams.length];
+    if (h !== a) {
+      fixtures.push({
+        id: id++, league: "SL", home: h, away: a,
+        date: d, time: "19:00",
+        venue: h === "Galatasaray" ? "RAMS Park" :
+               h === "Fenerbahçe" ? "Şükrü Saracoğlu" :
+               h === "Beşiktaş" ? "Tüpraş Stadyumu" : "Stadyum",
+        played: false
+      });
+    }
+  });
+
+  // Premier League örnek
+  const plMatches = [
+    ["Manchester City", "Liverpool", "2026-01-18"],
+    ["Arsenal", "Chelsea", "2026-02-07"],
+    ["Manchester United", "Tottenham", "2026-03-14"],
+    ["Liverpool", "Arsenal", "2026-04-04"],
+    ["Manchester City", "Tottenham", "2026-08-15"],
+    ["Chelsea", "Liverpool", "2026-09-19"],
+    ["Arsenal", "Manchester City", "2026-10-24"],
+    ["Tottenham", "Manchester United", "2026-11-21"],
+  ];
+  plMatches.forEach(([h, a, d]) => fixtures.push({
+    id: id++, league: "PL", home: h, away: a, date: d, time: "17:30",
+    venue: "Stadium", played: false
+  }));
+
+  // La Liga
+  [["Real Madrid", "Barcelona", "2026-03-22"],
+   ["Atletico Madrid", "Real Madrid", "2026-04-19"],
+   ["Barcelona", "Athletic Bilbao", "2026-09-13"],
+   ["Real Madrid", "Atletico Madrid", "2026-10-25"]
+  ].forEach(([h,a,d]) => fixtures.push({
+    id: id++, league: "LL", home: h, away: a, date: d, time: "21:00",
+    venue: "Stadyum", played: false
+  }));
+
+  // Serie A
+  [["Inter", "Milan", "2026-02-15"],
+   ["Juventus", "Napoli", "2026-03-08"],
+   ["Milan", "Juventus", "2026-04-05"],
+   ["Napoli", "Inter", "2026-10-18"]
+  ].forEach(([h,a,d]) => fixtures.push({
+    id: id++, league: "SA", home: h, away: a, date: d, time: "20:45",
+    venue: "Stadyum", played: false
+  }));
+
+  // Bundesliga
+  [["Bayern Münih", "Dortmund", "2026-01-31"],
+   ["Leverkusen", "Bayern Münih", "2026-03-07"],
+   ["Dortmund", "RB Leipzig", "2026-04-11"],
+   ["Bayern Münih", "Leverkusen", "2026-09-26"]
+  ].forEach(([h,a,d]) => fixtures.push({
+    id: id++, league: "BL", home: h, away: a, date: d, time: "18:30",
+    venue: "Allianz Arena", played: false
+  }));
+
+  // Ligue 1
+  [["PSG", "Marseille", "2026-02-22"],
+   ["Monaco", "PSG", "2026-04-26"],
+   ["PSG", "Lyon", "2026-09-20"],
+   ["Marseille", "Monaco", "2026-11-15"]
+  ].forEach(([h,a,d]) => fixtures.push({
+    id: id++, league: "L1", home: h, away: a, date: d, time: "21:00",
+    venue: "Parc des Princes", played: false
+  }));
+
+  // UCL
+  [["Manchester City", "Real Madrid", "2026-02-17", "UCL Son 16"],
+   ["Bayern Münih", "Arsenal", "2026-03-10", "UCL Son 16"],
+   ["PSG", "Barcelona", "2026-04-08", "UCL Çeyrek"],
+   ["Real Madrid", "Bayern Münih", "2026-04-29", "UCL Yarı"],
+   ["Real Madrid", "Manchester City", "2026-05-30", "UCL FİNAL"]
+  ].forEach(([h,a,d, stage]) => fixtures.push({
+    id: id++, league: "UCL", home: h, away: a, date: d, time: "22:00",
+    venue: stage, played: false
+  }));
+
+  // Tarihe göre sırala
+  fixtures.sort((a, b) => a.date.localeCompare(b.date));
+  return fixtures;
+}
+
+const FIXTURES = generateFixtures();
+
+// =====================================================
+// TAHMİN MODELLERİ
+// 1) İstatistik Modeli (Form + Gol ort + Ev avantajı)
+// 2) Elo Rating
+// 3) Poisson Dağılımı
+// =====================================================
+
+const HOME_ADVANTAGE = 0.35; // Ev sahibi gol avantajı
+
+// ---------- Yardımcı ----------
+function formScore(form) {
+  // Son 5 maç: 3=galibiyet, 1=beraberlik, 0=mağlubiyet
+  const max = form.length * 3;
+  return form.reduce((a, b) => a + b, 0) / max; // 0..1
+}
+
+function factorial(n) {
+  let r = 1;
+  for (let i = 2; i <= n; i++) r *= i;
+  return r;
+}
+
+function poisson(k, lambda) {
+  return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+}
+
+// ---------- 1) İSTATİSTİK MODELİ ----------
+function statisticalModel(home, away, ctx="league") {
+  const H = TEAMS[home], A = TEAMS[away];
+  const hForm = formScore(H.form);
+  const aForm = formScore(A.form);
+
+  // Beklenen goller
+  const hAdv = ctx === "friendly" ? 0.1 : ctx === "cup" ? 0.2 : HOME_ADVANTAGE;
+  let hLambda = (H.goalsFor + A.goalsAg) / 2 + hAdv + (hForm - 0.5) * 0.5;
+  let aLambda = (A.goalsFor + H.goalsAg) / 2 + (aForm - 0.5) * 0.5;
+
+  hLambda = Math.max(0.2, hLambda);
+  aLambda = Math.max(0.2, aLambda);
+
+  const hScore = Math.round(hLambda);
+  const aScore = Math.round(aLambda);
+
+  // Form temelli olasılık (basit)
+  const total = hForm + aForm + 0.4;
+  let pHome = (hForm + hAdv) / total;
+  let pAway = aForm / total;
+  let pDraw = 1 - pHome - pAway;
+  if (pDraw < 0.1) { pDraw = 0.15; }
+  // Normalize
+  const sum = pHome + pDraw + pAway;
+  pHome /= sum; pDraw /= sum; pAway /= sum;
+
+  return {
+    score: [hScore, aScore],
+    lambda: [hLambda, aLambda],
+    probs: { home: pHome, draw: pDraw, away: pAway },
+    notes: `Form: ${(hForm*100).toFixed(0)}% vs ${(aForm*100).toFixed(0)}%`
+  };
+}
+
+// ---------- 2) ELO MODELİ ----------
+function eloModel(home, away, ctx="league") {
+  const H = TEAMS[home], A = TEAMS[away];
+  const hAdv = ctx === "friendly" ? 30 : ctx === "cup" ? 60 : 80;
+  const effectiveHome = H.elo + hAdv;
+
+  // Beklenen sonuç (0..1)
+  const expHome = 1 / (1 + Math.pow(10, (A.elo - effectiveHome) / 400));
+  const expAway = 1 - expHome;
+
+  // Elo'da beraberlik için ampirik formül (yaklaşık)
+  // Yakın güçlü takımlarda beraberlik olasılığı artar
+  const eloDiff = Math.abs(effectiveHome - A.elo);
+  const pDraw = Math.max(0.15, 0.32 - eloDiff / 1500);
+  // 1 ve 2 olasılıklarını beraberlik olasılığına göre yeniden dağıt
+  const remaining = 1 - pDraw;
+  const pHome = expHome * remaining;
+  const pAway = expAway * remaining;
+
+  // Skor tahmini: olasılıklar × ortalama gol
+  const avgGoals = (H.goalsFor + A.goalsFor + H.goalsAg + A.goalsAg) / 4;
+  const hScore = Math.max(0, Math.round(avgGoals * pHome * 2.2));
+  const aScore = Math.max(0, Math.round(avgGoals * pAway * 2.2));
+
+  return {
+    score: [hScore, aScore],
+    probs: { home: pHome, draw: pDraw, away: pAway },
+    notes: `Elo: ${H.elo} (+${hAdv}) vs ${A.elo}`
+  };
+}
+
+// ---------- 3) POISSON MODELİ ----------
+function poissonModel(home, away, ctx="league") {
+  const H = TEAMS[home], A = TEAMS[away];
+  const hAdv = ctx === "friendly" ? 0.1 : ctx === "cup" ? 0.2 : HOME_ADVANTAGE;
+
+  // Elo etkisini lambda'ya da yansıt
+  const eloFactor = (H.elo - A.elo) / 400; // -1..+1 arası tipik
+
+  let hLambda = (H.goalsFor + A.goalsAg) / 2 + hAdv + eloFactor * 0.3;
+  let aLambda = (A.goalsFor + H.goalsAg) / 2 - eloFactor * 0.3;
+  hLambda = Math.max(0.15, hLambda);
+  aLambda = Math.max(0.15, aLambda);
+
+  // 0-6 gol matrisinin olasılığı
+  const maxGoals = 7;
+  let pHome = 0, pDraw = 0, pAway = 0;
+  const scoreMatrix = [];
+
+  for (let i = 0; i < maxGoals; i++) {
+    for (let j = 0; j < maxGoals; j++) {
+      const p = poisson(i, hLambda) * poisson(j, aLambda);
+      scoreMatrix.push({ h: i, a: j, p });
+      if (i > j) pHome += p;
+      else if (i === j) pDraw += p;
+      else pAway += p;
+    }
+  }
+
+  // En olası skor
+  scoreMatrix.sort((a, b) => b.p - a.p);
+  const top = scoreMatrix[0];
+
+  return {
+    score: [top.h, top.a],
+    lambda: [hLambda, aLambda],
+    probs: { home: pHome, draw: pDraw, away: pAway },
+    topScores: scoreMatrix.slice(0, 5),
+    notes: `λ: ${hLambda.toFixed(2)} vs ${aLambda.toFixed(2)}`
+  };
+}
+
+// ---------- BİRLEŞİK TAHMİN ----------
+function combinedPrediction(home, away, ctx="league") {
+  const stat = statisticalModel(home, away, ctx);
+  const elo = eloModel(home, away, ctx);
+  const poi = poissonModel(home, away, ctx);
+
+  // Olasılık ortalaması
+  const pHome = (stat.probs.home + elo.probs.home + poi.probs.home) / 3;
+  const pDraw = (stat.probs.draw + elo.probs.draw + poi.probs.draw) / 3;
+  const pAway = (stat.probs.away + elo.probs.away + poi.probs.away) / 3;
+
+  // Skor ortalaması (yuvarla)
+  const hScore = Math.round((stat.score[0] + elo.score[0] + poi.score[0]) / 3);
+  const aScore = Math.round((stat.score[1] + elo.score[1] + poi.score[1]) / 3);
+
+  // Güven seviyesi: modeller ne kadar uyumlu?
+  const probsH = [stat.probs.home, elo.probs.home, poi.probs.home];
+  const variance = probsH.reduce((acc, v) => acc + Math.pow(v - pHome, 2), 0) / 3;
+  const stdev = Math.sqrt(variance);
+  let confidence;
+  if (stdev < 0.05) confidence = "Yüksek";
+  else if (stdev < 0.12) confidence = "Orta";
+  else confidence = "Düşük";
+
+  // Yorumlama
+  let pick;
+  const maxP = Math.max(pHome, pDraw, pAway);
+  if (maxP === pHome) pick = "1 (Ev galibiyeti)";
+  else if (maxP === pAway) pick = "2 (Deplasman galibiyeti)";
+  else pick = "X (Beraberlik)";
+
+  return {
+    score: [hScore, aScore],
+    probs: { home: pHome, draw: pDraw, away: pAway },
+    confidence, pick, stdev,
+    models: { stat, elo, poisson: poi }
+  };
+}
+
+// ---------- ANALİZ METNİ ----------
+function generateAnalysis(home, away, combined, ctx) {
+  const H = TEAMS[home], A = TEAMS[away];
+  const points = [];
+
+  // Elo farkı
+  const eloDiff = H.elo - A.elo;
+  if (Math.abs(eloDiff) > 100) {
+    const fav = eloDiff > 0 ? home : away;
+    points.push(`<b>${fav}</b> Elo puanında belirgin üstün (${Math.abs(eloDiff)} fark).`);
+  } else {
+    points.push("Elo puanları birbirine yakın — dengeli bir maç beklentisi.");
+  }
+
+  // Form
+  const hF = formScore(H.form), aF = formScore(A.form);
+  if (hF > aF + 0.15) points.push(`<b>${home}</b> son 5 maçta belirgin daha iyi formda.`);
+  else if (aF > hF + 0.15) points.push(`<b>${away}</b> son 5 maçta belirgin daha iyi formda.`);
+  else points.push("İki takım da benzer formda — son maç performansı belirleyici olmayabilir.");
+
+  // Hücum
+  if (H.goalsFor > 2.0 && A.goalsFor > 1.8) points.push("İki takımın da hücum üretkenliği yüksek — bol gollü maç olasılığı.");
+  else if (H.goalsAg > 1.2 && A.goalsAg > 1.2) points.push("Savunmalar zayıf — karşılıklı goller bekleniyor.");
+  else if (H.goalsFor < 1.4 && A.goalsFor < 1.4) points.push("İki takım da gol bulmakta zorlanıyor — düşük skorlu maç olasılığı.");
+
+  // Ev avantajı
+  if (ctx === "league") points.push(`Ev sahibi avantajı dikkate alındı (+${HOME_ADVANTAGE.toFixed(2)} beklenen gol).`);
+  else if (ctx === "cup") points.push("Kupa/eleme maçı: ev avantajı azaltıldı, motivasyon yüksek.");
+  else points.push("Hazırlık maçı: rotasyon ve eksikler sonucu etkileyebilir.");
+
+  // Güven
+  if (combined.confidence === "Düşük") {
+    points.push(`⚠️ <b>Düşük güven:</b> modeller arasında uyumsuzluk var (σ=${combined.stdev.toFixed(3)}). Sonuç sürpriz içerebilir.`);
+  } else if (combined.confidence === "Yüksek") {
+    points.push(`✅ <b>Yüksek güven:</b> üç model de benzer tahmin üretti.`);
+  }
+
+  return "<ul>" + points.map(p => `<li>${p}</li>`).join("") + "</ul>";
+}
+
+// =====================================================
+// UYGULAMA MANTIĞI
+// =====================================================
+
+// Tab geçişi
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById("view-" + tab.dataset.tab).classList.add("active");
+  });
+});
+
+// ---------- FIKSTUR LİSTESİ ----------
+function renderFixtures() {
+  const league = document.getElementById("leagueFilter").value;
+  const search = document.getElementById("searchTeam").value.toLowerCase().trim();
+  const month = document.getElementById("monthFilter").value;
+  const list = document.getElementById("fixtureList");
+
+  const filtered = FIXTURES.filter(f => {
+    if (league !== "all" && f.league !== league) return false;
+    if (month !== "all" && !f.date.startsWith(month)) return false;
+    if (search && !f.home.toLowerCase().includes(search) && !f.away.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="muted" style="padding:40px;text-align:center;grid-column:1/-1">
+      Filtrelere uygun maç bulunamadı.</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(f => {
+    const pred = combinedPrediction(f.home, f.away, f.league === "WC2026" || f.league === "UCL" ? "cup" : "league");
+    const dateStr = new Date(f.date).toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" });
+    return `
+      <div class="fixture" onclick="quickPredict('${f.home}','${f.away}','${f.league}')">
+        <div class="fixture-head">
+          <span class="league-badge">${LEAGUE_NAMES[f.league]}</span>
+          <span>${dateStr} · ${f.time}</span>
+        </div>
+        <div class="fixture-teams">
+          <div class="fixture-team home">${f.home}</div>
+          <div class="fixture-vs">${pred.score[0]} - ${pred.score[1]}</div>
+          <div class="fixture-team away">${f.away}</div>
+        </div>
+        <div class="fixture-foot">
+          <span>${f.venue}</span>
+          <span class="predict-pill">${pred.pick.split(" ")[0]} · ${(Math.max(pred.probs.home, pred.probs.draw, pred.probs.away)*100).toFixed(0)}%</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+document.getElementById("leagueFilter").addEventListener("change", renderFixtures);
+document.getElementById("searchTeam").addEventListener("input", renderFixtures);
+document.getElementById("monthFilter").addEventListener("change", renderFixtures);
+
+// ---------- TAHMİN STÜDYOSU ----------
+function fillTeamSelects() {
+  const teams = Object.keys(TEAMS).sort();
+  const homeSel = document.getElementById("homeTeam");
+  const awaySel = document.getElementById("awayTeam");
+  homeSel.innerHTML = teams.map(t => `<option value="${t}">${t} (${LEAGUE_NAMES[TEAMS[t].league]})</option>`).join("");
+  awaySel.innerHTML = teams.map(t => `<option value="${t}">${t} (${LEAGUE_NAMES[TEAMS[t].league]})</option>`).join("");
+  homeSel.value = "Türkiye";
+  awaySel.value = "Arjantin";
+}
+
+function quickPredict(home, away, league) {
+  // Tab'ı tahmine geçir
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelector('[data-tab="predict"]').classList.add("active");
+  document.getElementById("view-predict").classList.add("active");
+
+  document.getElementById("homeTeam").value = home;
+  document.getElementById("awayTeam").value = away;
+  document.getElementById("matchContext").value =
+    (league === "WC2026" || league === "UCL") ? "cup" : "league";
+  runPrediction();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function runPrediction() {
+  const home = document.getElementById("homeTeam").value;
+  const away = document.getElementById("awayTeam").value;
+  const ctx = document.getElementById("matchContext").value;
+
+  if (home === away) {
+    alert("Lütfen farklı takımlar seçin.");
+    return;
+  }
+
+  const pred = combinedPrediction(home, away, ctx);
+  const panel = document.getElementById("predictionResult");
+  panel.classList.remove("hidden");
+
+  document.getElementById("resHome").textContent = home;
+  document.getElementById("resAway").textContent = away;
+  document.getElementById("resHomeScore").textContent = pred.score[0];
+  document.getElementById("resAwayScore").textContent = pred.score[1];
+
+  const conf = document.getElementById("resConfidence");
+  const confColors = { "Yüksek": "var(--accent)", "Orta": "var(--warn)", "Düşük": "var(--danger)" };
+  conf.innerHTML = `<span style="color:${confColors[pred.confidence]}">● ${pred.confidence} Güven</span><br>
+    <small style="color:var(--muted)">${pred.pick}</small>`;
+
+  // Olasılık barı
+  const pH = pred.probs.home * 100;
+  const pD = pred.probs.draw * 100;
+  const pA = pred.probs.away * 100;
+  document.getElementById("probHome").style.width = pH + "%";
+  document.getElementById("probHome").textContent = `1 · ${pH.toFixed(0)}%`;
+  document.getElementById("probDraw").style.width = pD + "%";
+  document.getElementById("probDraw").textContent = `X · ${pD.toFixed(0)}%`;
+  document.getElementById("probAway").style.width = pA + "%";
+  document.getElementById("probAway").textContent = `${pA.toFixed(0)}% · 2`;
+
+  // Modeller
+  const m = pred.models;
+  document.getElementById("statModel").innerHTML = `
+    <div class="pred-score">${m.stat.score[0]} - ${m.stat.score[1]}</div>
+    <div>1: ${(m.stat.probs.home*100).toFixed(1)}%</div>
+    <div>X: ${(m.stat.probs.draw*100).toFixed(1)}%</div>
+    <div>2: ${(m.stat.probs.away*100).toFixed(1)}%</div>
+    <div style="color:var(--muted);margin-top:6px;font-size:11px">${m.stat.notes}</div>
+  `;
+  document.getElementById("eloModel").innerHTML = `
+    <div class="pred-score">${m.elo.score[0]} - ${m.elo.score[1]}</div>
+    <div>1: ${(m.elo.probs.home*100).toFixed(1)}%</div>
+    <div>X: ${(m.elo.probs.draw*100).toFixed(1)}%</div>
+    <div>2: ${(m.elo.probs.away*100).toFixed(1)}%</div>
+    <div style="color:var(--muted);margin-top:6px;font-size:11px">${m.elo.notes}</div>
+  `;
+  document.getElementById("poissonModel").innerHTML = `
+    <div class="pred-score">${m.poisson.score[0]} - ${m.poisson.score[1]}</div>
+    <div>1: ${(m.poisson.probs.home*100).toFixed(1)}%</div>
+    <div>X: ${(m.poisson.probs.draw*100).toFixed(1)}%</div>
+    <div>2: ${(m.poisson.probs.away*100).toFixed(1)}%</div>
+    <div style="color:var(--muted);margin-top:6px;font-size:11px">${m.poisson.notes}</div>
+  `;
+
+  // Analiz
+  document.getElementById("analysisText").innerHTML = generateAnalysis(home, away, pred, ctx);
+
+  // Top 5 skor
+  document.getElementById("topScores").innerHTML = m.poisson.topScores.map(s =>
+    `<div class="score-item">
+       <div class="s">${s.h} - ${s.a}</div>
+       <div class="p">${(s.p*100).toFixed(1)}% olasılık</div>
+     </div>`
+  ).join("");
+}
+
+document.getElementById("runPredict").addEventListener("click", runPrediction);
+
+// ---------- TAKIM TABLOSU ----------
+function renderTeamTable() {
+  const teams = Object.entries(TEAMS)
+    .map(([name, t]) => ({ name, ...t, formPct: formScore(t.form) * 100 }))
+    .sort((a, b) => b.elo - a.elo);
+
+  const rows = teams.map((t, i) => {
+    const rankClass = i < 3 ? "rank top" : "rank";
+    return `
+      <div class="tt-row">
+        <div class="${rankClass}">${i + 1}</div>
+        <div>${t.name}</div>
+        <div class="hide-mobile">${LEAGUE_NAMES[t.league]}</div>
+        <div><b>${t.elo}</b></div>
+        <div class="hide-mobile">${t.formPct.toFixed(0)}%</div>
+        <div class="hide-mobile">${t.goalsFor.toFixed(1)}</div>
+        <div class="hide-mobile">${t.goalsAg.toFixed(1)}</div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("teamTable").innerHTML = `
+    <div class="tt-row head">
+      <div>#</div>
+      <div>Takım</div>
+      <div class="hide-mobile">Lig</div>
+      <div>Elo</div>
+      <div class="hide-mobile">Form</div>
+      <div class="hide-mobile">Gol+</div>
+      <div class="hide-mobile">Gol-</div>
+    </div>
+    ${rows}
+  `;
+}
+
+// ---------- INIT ----------
+fillTeamSelects();
+renderFixtures();
+renderTeamTable();
+</script>
+</body></html>
